@@ -16,24 +16,30 @@ import (
 )
 
 func main() {
+	// general context for stopping the server
 	generalCtx, stopServer := context.WithTimeout(context.Background(), 15*time.Second)
 	defer stopServer()
 
+	// error context
 	wg, _ := errgroup.WithContext(context.Background())
 	mux := http.NewServeMux()
+
 	const addr = "127.0.0.1:4308"
 
+	// logging setup
 	logger := &config.Logger{
 		ErrLogger: log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile),
 		InfLogger: log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime),
 	}
 
+	// server setup
 	srv := &http.Server{
 		Addr:     addr,
 		ErrorLog: logger.ErrLogger,
 		Handler:  mux,
 	}
 
+	// environment
 	_ = godotenv.Load(".env")
 
 	DB, err := db.Init(logger)
