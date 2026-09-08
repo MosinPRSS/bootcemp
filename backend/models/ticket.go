@@ -13,6 +13,6 @@ type Ticket struct {
 	TotalCost uint32
 
 	// Stop foreign key
-	EndStopiD uint
+	EndStopID uint
 	EndStop   Stop
 }

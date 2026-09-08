@@ -48,5 +48,5 @@ type Stop struct {
 	//      ...
 	// }
 	// _Coordinates_ uses WGS 84 standard
-	Сoordinates Geostring `gorm:"type:geography(Point, 4326)"`
+	Coordinates Geostring `gorm:"type:geography(Point, 4326)"`
 }
