@@ -2,24 +2,29 @@
 import { computed } from "vue"
 
 const props = defineProps({
+    // Заголовок
     title: {
         type: String,
         default: ""
     },
+    // День недели
     dayOfWeek: {
         type: String,
         default: ""
     },
+    // Коэффициент отношения дня к среднему
     knn: {
         type: Number,
         default: null
     },
+    // Дата
     date: {
         type: [String, Date],
         default: null
     }
 })
 
+// Форматирование даты
 const formattedDate = computed(() => {
     if (!props.date)
     {
@@ -55,3 +60,7 @@ const formattedDate = computed(() => {
         </div>
     </header>
 </template>
+
+<style scoped>
+    
+</style>
