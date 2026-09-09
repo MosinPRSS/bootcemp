@@ -6,6 +6,7 @@ const props = defineProps({
     fleetUsage: {
         type: Array,
         required: true,
+        default: () => [],
         validator: (value) => {
             return value.every(item =>
                 "model" in item && // Модель 
@@ -40,6 +41,13 @@ const formatCurrency = (value) => {
     if (value === null || value === undefined) 
         return '-'
     return value.toLocaleString('ru-RU', { minimumFractionDigits: 0, maximumFractionDigits: 0 }) + ' ₽'
+}
+
+// Процент загрузки
+const getUsagePercent = (used, available) => {
+    if (!available) 
+        return 0
+    return Math.round((used / available) * 100)
 }
 
 // Процент загрузки
@@ -87,7 +95,7 @@ const getProgressFunc = (percent) => {
                                     class="progress-bar"
                                     role="progressbar"
                                     :style="{ width: getUsagePercent(item.used, item.available) + '%' }"
-                                    :class="getProgressClass(getUsagePercent(item.used, item.available))"
+                                    :class="getProgressFunc(getUsagePercent(item.used, item.available))"
                                     :aria-valuenow="getUsagePercent(item.used, item.available)"
                                     aria-valuemin="0"
                                     aria-valuemax="100"

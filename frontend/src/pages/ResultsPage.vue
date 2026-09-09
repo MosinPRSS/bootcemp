@@ -17,28 +17,28 @@ const result = ref({
 
     hourlyData: [
         {
-        hour: "07-08",
-        baseFlow: 3500,
-        adjustedFlow: 3850,
-        assigned: [
-            { model: "ЛиАЗ-6213", count: 2 },
-            { model: "ГАЗель NEXT", count: 4 }
-        ],
-        totalCapacity: 3850,
-        served: 3500,
-        deficit: 350
+            hour: "07-08",
+            baseFlow: 3500,
+            adjustedFlow: 3850,
+            assigned: [
+                { model: "ЛиАЗ-6213", count: 2 },
+                { model: "ГАЗель NEXT", count: 4 }
+            ],
+            totalCapacity: 3850,
+            served: 3500,
+            deficit: 350
         },
         {
-        hour: "08-09",
-        baseFlow: 2500,
-        adjustedFlow: 2750,
-        assigned: [
-            { model: "ПАЗ-32053", count: 3 },
-            { model: "Yutong ZK6122H", count: 1 }
-        ],
-        totalCapacity: 2800,
-        served: 2750,
-        deficit: 0
+            hour: "08-09",
+            baseFlow: 2500,
+            adjustedFlow: 2750,
+            assigned: [
+                { model: "ПАЗ-32053", count: 3 },
+                { model: "Yutong ZK6122H", count: 1 }
+            ],
+            totalCapacity: 2800,
+            served: 2750,
+            deficit: 0
         }
     ],
 
@@ -56,11 +56,42 @@ const result = ref({
     }
 })
 
-
+const exportReport = () => {
+    console.log('Экспорт отчёта в Excel')
+    alert('Функция экспорта будет реализована позже')
+}
 </script>
 
 <template>
-
+    <div class="container results-page">
+        <AppHeader
+            title="Результаты отчёта"
+            :dayOfWeek="result.dayOfWeek"
+            :knn="result.knn"
+            :date="result.date"
+        />
+        <ResultSummary
+            :totalCost="result.totalCost"
+            :totalBuses="result.totalBuses"
+            :servedPassengers="result.servedPassengers"
+            :deficit="result.deficit"
+        />
+        <HourlyScheduleTable
+            :data="result.hourlyData"
+            :dayOfWeek="result.dayOfWeek"
+        />
+        <FleetUsageTable :fleet-usage="result.fleetUsage"/>
+        <RouteInfo
+            :stops="result.routeInfo.stops"
+            :stopDuration="result.routeInfo.stopDuration"
+            :cycleDuration="result.routeInfo.cycleDuration"
+        />
+        <div class="text-center mt-4 mb-5">
+            <button class="btn btn-lg btn-success" @click="exportReport">
+                Экспорт отчёта в Excel
+            </button>
+        </div>
+    </div>
 </template>
 
 <style scoped>

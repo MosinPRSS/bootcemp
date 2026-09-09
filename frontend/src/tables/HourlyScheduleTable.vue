@@ -1,5 +1,4 @@
 <script setup>
-import { isTemplateExpression } from "typescript";
 import { computed } from "vue"
 
 const props = defineProps({
