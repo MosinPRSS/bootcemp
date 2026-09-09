@@ -24,7 +24,6 @@ const props = defineProps({
 })
 
 // Вычисление итогов
-
 const totals = computed(() => {
     // Иницализация результатов для подсчёта
     const result = {
