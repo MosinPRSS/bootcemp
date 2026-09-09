@@ -39,16 +39,16 @@
             <input v-model="vehicle.numberInFleet" type="number" class="form-control" />
           </td>
           <td>
-            <input v-model="vehicle.passengerCapacityOverallMin" type="number" class="form-control" />
+            <input v-model="vehicle.passengerCapacityOverallMin" type="number" class="form-control" @input='checkCapacity(vehicle)' />
           </td>
           <td>
-            <input v-model="vehicle.passengerCapacityOverallMax" type="number" class="form-control" />
+            <input v-model="vehicle.passengerCapacityOverallMax" type="number" class="form-control" @input='checkCapacity(vehicle)' />
           </td>
           <td>
-            <input v-model="vehicle.passengerCapacitySeatsMin" type="number" class="form-control" />
+            <input v-model="vehicle.passengerCapacitySeatsMin" type="number" class="form-control" @input='checkCapacity(vehicle)' />
           </td>
           <td>
-            <input v-model="vehicle.passengerCapacitySeatsMax" type="number" class="form-control" />
+            <input v-model="vehicle.passengerCapacitySeatsMax" type="number" class="form-control" @input='checkCapacity(vehicle)' />
           </td>
           <td>
             <input v-model="vehicle.carHourCostMin" type="number" class="form-control" />
@@ -64,11 +64,17 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 // Данные таблицы (временный вариант)
 const vehicles = ref([
     {id: 1, modelName: 'ПАЗ-32053 / 3204 «Вектор»', vehicleClass: 'Малый', numberInFleet: '30', passengerCapacityOverallMin: 36, passengerCapacityOverallMax: 50, passengerCapacitySeatsMin: 22, passengerCapacitySeatsMax: 30, carHourCostMin: 1800, carHourCostMax: 2400}
-]) 
+]);
+
+const checkCapacity = (vehicle) =>{
+  if(vehicle.passengerCapacityOverallMin > vehicle.passengerCapacityOverallMax || vehicle.passengerCapacitySeatsMin > vehicle.passengerCapacitySeatsMax) {
+    alert('Минимальная пассажировместимость не может быть больше максимальной')
+  }
+}
 </script>
 
 <style scoped>

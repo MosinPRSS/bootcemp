@@ -41,7 +41,7 @@
 
  <!-- Крайний Север - флажок -->
 <div class="form-check">
-    <label for="far-north" class="form-check-label" >Регион - крайний север
+    <label for="far-north" class="form-check-label" >Регион - Крайний Север
         <input class="form-check-input" id="far-north" type="checkbox" v-model="isFarNorth"/>
     </label>
 </div>
