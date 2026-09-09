@@ -1,56 +1,56 @@
 <template>
 <h2 class="header-title">{{ title }}</h2>
 <!-- Первое меню - выбор типа расчета -->
- <label for="form-select-sm">Выберите тип расчета:
-    <select class="form-select-sm" v-model="calcType">
-        <option value="" disabled>Тип расчета не выбран</option>
-        <option value="hours">Расчет по часам</option>
-        <option value="weekdays">Расчет по дням недели</option>
-    </select>
-</label>
-
-<!-- Второе меню - выбор единиц -->
-<!-- Выбор часа -->
-<div v-if="calcType === 'hours'">
-    <label for="hourSelection">Выберите час:
-        <select id="hourSelection" class="form-select-sm" v-if="calcType === 'hours'" v-model="selectedHour" @change="hourChange">
-            <option value="" disabled>Выберите час...</option>
-            <option v-for="hourOption in hourOptions" :key="hourOption.value" :value="hourOption.value">{{ hourOption.label }}</option>
+<div class="d-flex flex-column align-items-center gap-2">
+    <label for="form-select-sm">Выберите тип расчета:
+        <select class="form-select-sm" v-model="calcType">
+            <option value="" disabled>Тип расчета не выбран</option>
+            <option value="hours">Расчет по часам</option>
+            <option value="weekdays">Расчет по дням недели</option>
         </select>
     </label>
-</div>
-    
-<!-- Выбор дня недели -->
- <div v-if="calcType === 'weekdays'">
-    <label for="hourSelection">Выберите день недели:
-        <select class="form-select-sm" v-if="calcType === 'weekdays'" v-model="selectedWeekday" @change="weekdayChange">
-            <option value="" disabled>Выберите день недели...</option>
-            <option v-for="weekdayOption in weekdayOptions" :key="weekdayOption.value" :value="weekdayOption.value">{{ weekdayOption.label }}</option>
-        </select>
+
+    <!-- Второе меню - выбор единиц -->
+    <!-- Выбор часа -->
+    <div v-if="calcType === 'hours'">
+        <label for="hourSelection">Выберите час:
+            <select id="hourSelection" class="form-select-sm" v-if="calcType === 'hours'" v-model="selectedHour" @change="hourChange">
+                <option value="" disabled>Выберите час...</option>
+                <option v-for="hourOption in hourOptions" :key="hourOption.value" :value="hourOption.value">{{ hourOption.label }}</option>
+            </select>
+        </label>
+    </div>
+        
+    <!-- Выбор дня недели -->
+    <div v-if="calcType === 'weekdays'">
+        <label for="hourSelection">Выберите день недели:
+            <select class="form-select-sm" v-if="calcType === 'weekdays'" v-model="selectedWeekday" @change="weekdayChange">
+                <option value="" disabled>Выберите день недели...</option>
+                <option v-for="weekdayOption in weekdayOptions" :key="weekdayOption.value" :value="weekdayOption.value">{{ weekdayOption.label }}</option>
+            </select>
+        </label>
+    </div>
+
+    <!-- Выбор даты, по дате определяется сезон -->
+    <label for="date-input">Выберите дату:
+        <input 
+        id="date-input" 
+        type="date" 
+        v-model="selectedDate" 
+        />
     </label>
+
+    <!-- Крайний Север - флажок -->
+    <div class="form-check">
+        <label for="far-north" class="form-check-label" >Регион - Крайний Север
+            <input class="form-check-input" id="far-north" type="checkbox" v-model="isFarNorth"/>
+        </label>
+    </div>
 </div>
 
-<!-- Выбор даты, по дате определяется сезон -->
-<label for="date-input">Выберите дату:
-    <input 
-      id="date-input" 
-      type="date" 
-      v-model="selectedDate" 
-    />
-</label>
-
- <!-- Крайний Север - флажок -->
-<div class="form-check">
-    <label for="far-north" class="form-check-label" >Регион - Крайний Север
-        <input class="form-check-input" id="far-north" type="checkbox" v-model="isFarNorth"/>
-    </label>
-</div>
-
-<router-link to="/about" class="btn btn-primary">
+<router-link to="/about" class="btn btn-primary mt-3 mb-3">
   Рассчитать
 </router-link>
-
-
 </template>
 
 <script setup>
@@ -159,5 +159,9 @@ const isFarNorth = ref(false);
 
 .form-check{
     width: 35vh;
+}
+
+h2{
+    margin-top: 25px;
 }
 </style>

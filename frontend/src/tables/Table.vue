@@ -1,7 +1,7 @@
 <template>
-<div class='table-container'>
+<div class='table-responsive'>
     <!-- Таблица -->
-    <table class="table">
+    <table class="table mt-3">
         <!-- Заголовок таблицы -->
         <thead>
             <tr>
