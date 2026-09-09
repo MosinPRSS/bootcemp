@@ -1,15 +1,20 @@
 <template>
 <!-- Выбор даты, по дате определяется сезон -->
-<label for="date-input">Выберите дату:</label>
+<label for="date-input">Выберите дату:
     <input 
       id="date-input" 
       type="date" 
       v-model="selectedDate" 
     />
+</label>
 
  <!-- Крайний Север - флажок -->
-<label for="far-north">Регион - крайний север</label>
-    <input id="far-north" type="checkbox" v-model="isFarNorth"/>
+<div class="form-check">
+    <label for="far-north" class="form-check-label" >Регион - крайний север
+        <input class="form-check-input" id="far-north" type="checkbox" v-model="isFarNorth"/>
+    </label>
+</div>
+
 </template>
 
 <script setup>
@@ -33,5 +38,11 @@ const isFarNorth = ref(false);
 </script>
 
 <style scoped>
+#date-input{
+    width: min-content;
+}
 
+.form-check{
+    width: 35vh;
+}
 </style>
