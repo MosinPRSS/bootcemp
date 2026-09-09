@@ -1,23 +1,33 @@
 <template>
 <!-- Первое меню - выбор типа расчета -->
-<select v-model="calcType">
-    <option value="" disabled>Выберите тип расчета</option>
-    <option value="hours">Расчет по часам</option>
-    <option value="weekdays">Расчет по дням недели</option>
-</select>
+ <label for="form-select-sm">Выберите тип расчета:
+    <select class="form-select-sm" v-model="calcType">
+        <option value="" disabled>Тип расчета не выбран</option>
+        <option value="hours">Расчет по часам</option>
+        <option value="weekdays">Расчет по дням недели</option>
+    </select>
+</label>
 
 <!-- Второе меню - выбор единиц -->
 <!-- Выбор часа -->
-<select v-if="calcType === 'hours'" v-model="selectedHour" @change="hourChange">
-    <option value="" disabled>Выберите час</option>
-    <option v-for="hourOption in hourOptions" :key="hourOption.value" :value="hourOption.value">{{ hourOption.label }}</option>
-</select>
-
+<div v-if="calcType === 'hours'">
+    <label for="hourSelection">Выберите час:
+        <select id="hourSelection" class="form-select-sm" v-if="calcType === 'hours'" v-model="selectedHour" @change="hourChange">
+            <option value="" disabled>Выберите час...</option>
+            <option v-for="hourOption in hourOptions" :key="hourOption.value" :value="hourOption.value">{{ hourOption.label }}</option>
+        </select>
+    </label>
+</div>
+    
 <!-- Выбор дня недели -->
-<select v-if="calcType === 'weekdays'" v-model="selectedWeekday" @change="weekdayChange">
-    <option value="" disabled>Выберите день недели</option>
-    <option v-for="weekdayOption in weekdayOptions" :key="weekdayOption.value" :value="weekdayOption.value">{{ weekdayOption.label }}</option>
-</select>
+ <div v-if="calcType === 'weekdays'">
+    <label for="hourSelection">Выберите день недели:
+        <select class="form-select-sm" v-if="calcType === 'weekdays'" v-model="selectedWeekday" @change="weekdayChange">
+            <option value="" disabled>Выберите день недели...</option>
+            <option v-for="weekdayOption in weekdayOptions" :key="weekdayOption.value" :value="weekdayOption.value">{{ weekdayOption.label }}</option>
+        </select>
+    </label>
+</div>
 </template>
 
 
@@ -73,10 +83,10 @@ const WEEKDAY_COEFFICIENTS = {
 
 const hourOptions = computed(() => {
     const options = [];
-    // Генерирация часов от 5 до 23 включительно
+    // Генерация часов от 5 до 23 включительно
     for (let i = 5; i <= 23; i++) {
         options.push({
-        value: i,        // Хранение первое число (5, 6, 7, ...)
+        value: i,        // Хранение первого числа (5, 6, 7, ...)
         label: `${i}-${i + 1}`  // Отображение в формате "5-6", "6-7", и т.д.
         });
     }

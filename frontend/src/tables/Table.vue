@@ -1,7 +1,7 @@
 <template>
 <div class='table-container'>
     <!-- Таблица -->
-    <table>
+    <table class="table">
         <!-- Заголовок таблицы -->
         <thead>
             <tr>
@@ -24,11 +24,11 @@
           <td>{{ vehicle.id }}</td>
           
           <td>
-            <input v-model="vehicle.modelName" type="text" class="table-input" />
+            <input v-model="vehicle.modelName" type="text" class="form-control" />
           </td>
           <td>
             <!-- Для класса машины выпадающий список -->
-            <select v-model="vehicle.vehicleClass" class="table-select">
+            <select v-model="vehicle.vehicleClass" class="form-select">
               <option value="Особо малый">Особо малый</option>
               <option value="Малый">Малый</option>
               <option value="Средний">Средний</option>
@@ -36,25 +36,25 @@
             </select>
           </td>
           <td>
-            <input v-model="vehicle.numberInFleet" type="number" class="table-input" />
+            <input v-model="vehicle.numberInFleet" type="number" class="form-control" />
           </td>
           <td>
-            <input v-model="vehicle.passengerCapacityOverallMin" type="number" class="table-input" />
+            <input v-model="vehicle.passengerCapacityOverallMin" type="number" class="form-control" />
           </td>
           <td>
-            <input v-model="vehicle.passengerCapacityOverallMax" type="number" class="table-input" />
+            <input v-model="vehicle.passengerCapacityOverallMax" type="number" class="form-control" />
           </td>
           <td>
-            <input v-model="vehicle.passengerCapacitySeatsMin" type="number" class="table-input" />
+            <input v-model="vehicle.passengerCapacitySeatsMin" type="number" class="form-control" />
           </td>
           <td>
-            <input v-model="vehicle.passengerCapacitySeatsMax" type="number" class="table-input" />
+            <input v-model="vehicle.passengerCapacitySeatsMax" type="number" class="form-control" />
           </td>
           <td>
-            <input v-model="vehicle.carHourCostMin" type="number" class="table-input" />
+            <input v-model="vehicle.carHourCostMin" type="number" class="form-control" />
           </td>
           <td>
-            <input v-model="vehicle.carHourCostMax" type="number" class="table-input" />
+            <input v-model="vehicle.carHourCostMax" type="number" class="form-control" />
           </td>
         </tr>
       </tbody>
