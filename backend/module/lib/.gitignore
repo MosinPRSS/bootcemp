@@ -1,0 +1,9 @@
+# libs
+*.so
+*.dylib
+*.dll
+
+# objects
+*.o
+
+BootCampTest.cpp

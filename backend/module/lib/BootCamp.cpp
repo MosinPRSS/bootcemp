@@ -6,7 +6,6 @@
 #include <regex>
 #include <utility>
 #include <locale.h>
-#include <Windows.h>
 #include <json/json.h>
 
 using namespace std;
@@ -165,9 +164,7 @@ public:
 // - Модификаторы стоимости modifiers
 // - Расписание пассажиропотока schedule
 int main() {
-
     
-    SetConsoleOutputCP(CP_UTF8);
     setlocale(LC_ALL, "ru");
 
     // Для работы с json-файлом
