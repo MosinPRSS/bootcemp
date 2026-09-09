@@ -1,9 +1,9 @@
 <script setup>
-import HelloWorld from './tables/Table.vue'
 import ResultsPage from './pages/ResultsPage.vue'
+import DataSetup from './pages/DataSetup.vue';
 </script>
 
 <template>
-  <HelloWorld />
+  <DataSetup />
   <ResultsPage />
 </template>

@@ -1,4 +1,5 @@
 <template>
+<h2 class="header-title">{{ title }}</h2>
 <!-- Первое меню - выбор типа расчета -->
  <label for="form-select-sm">Выберите тип расчета:
     <select class="form-select-sm" v-model="calcType">
@@ -45,6 +46,11 @@
     </label>
 </div>
 
+<router-link to="/about" class="btn btn-primary">
+  Рассчитать
+</router-link>
+
+
 </template>
 
 <script setup>
@@ -57,6 +63,11 @@ const selectedweekDay = ref(null);
 
 // Входные данные
 const props = defineProps({
+    // Заголовок
+    title: {
+        type: String,
+        default: ""
+    },
     hourData: {
         type: Array,
         default: () => [],
