@@ -14,6 +14,9 @@ const outputData = ref(null)
 const isLoadingInput = ref(false)
 const isLoadingOutput = ref(false)
 
+// Флаги результата
+const exportOnly = ref(false)
+
 // Ошибка
 const error = ref(null)
 
@@ -37,54 +40,86 @@ const reportDate = computed(() => {
     return new Date().toISOString().slice(0, 10)
 })
 
-// Загрузка input.json
-const loadInputData = async () => {
-    isLoadingInput.value = true
-    error.value = null
+// Загрузка fleet.json
+const loadFleet = async () => {
+    isLoadingInput.value = true; error.value = null
     try 
     {
-        const response = await fetch("/input.json")
-        if (!response.ok)
-            throw new Error(`HTTP ${response.status}: input.json`)
-        inputData.value = await response.json()
-        if (inputData.value?.schedule?.date)
-            selectedDate.value = inputData.value.schedule.date
+        const r = await fetch("/fleet.json")
+        if (!r.ok) 
+            throw new Error(`HTTP ${r.status}: fleet.json`)
+        const j = await r.json()
+        inputData.value = { ...(inputData.value || createEmptyInput()), fleet: j.fleet }
     } 
     catch (e) 
-    {
-        error.value = e.message
+    { 
+        error.value = e.message 
     } 
     finally 
+    { 
+        isLoadingInput.value = false 
+    }
+}
+
+// Загрузка data.json
+const loadData = async () => {
+    isLoadingInput.value = true; error.value = null
+    try 
     {
-        isLoadingInput.value = false
+        const r = await fetch("/data.json")
+        if (!r.ok) 
+            throw new Error(`HTTP ${r.status}: data.json`)
+        const j = await r.json()
+        inputData.value = { ...(inputData.value || createEmptyInput()), modifiers: j.modifiers, schedule: j.schedule }
+        if (j.schedule?.date) 
+            selectedDate.value = j.schedule.date
+    } 
+    catch (e) 
+    { 
+        error.value = e.message 
+    } 
+    finally 
+    { 
+        isLoadingInput.value = false 
     }
 }
 
 // Создание пустого шаблона (ручной ввод)
 // Структура полностью совпадает с input.json, только значения пустые
 const createEmptyInput = () => ({
+    // Одна пустая строка чтобы пользователь понял с чего начать
     fleet: [
-        // Одна пустая строка — чтобы пользователю было с чего начать
-        {
-            model: "",
-            class: "Малый",
-            max_available: 0,
-            capacity: 0,
-            base_cost_per_hour: 0
+        { 
+            model: "", 
+            class: "Малый", 
+            max_available: 0, 
+            seats_total: 0, 
+            seats_seated: 0, 
+            base_cost_per_hour: 0, 
+            max_machine_hours: 0 
         }
     ],
     modifiers: {
-        region: "",
-        season: "Лето",
-        route_cycle_hours: 2.0,
-        stops: 0,
-        stop_duration_min: 0
+        region: "", 
+        is_far_north: false,
+        winter_from: "11-01", 
+        winter_to: "03-31",
+        stops: 0, 
+        stop_duration_min: 0, 
+        travel_time_min: 0,
+        region_multiplier: 1.0, 
+        winter_surcharge: 0.15, 
+        far_north_surcharge: 0.40,
+        service_start: "05:00", 
+        service_end: "01:00", 
+        driver_shift_hours: 8
     },
     schedule: {
         date: new Date().toISOString().slice(0, 10),
+        date_from: new Date().toISOString().slice(0, 10),
+        date_to: new Date().toISOString().slice(0, 10),
         day_of_week: new Date().toLocaleDateString("ru-RU", { weekday: "long" }),
-        daily_coefficient: 1.0,
-        hourly_flow: {}
+        daily_coefficient: 1.0, hourly_flow: {}
     }
 })
 
@@ -119,9 +154,20 @@ const loadOutputData = async () => {
 // Переход к результатам 
 const goToResults = async () => {
     // Подставляем актуальный день недели из выбранной даты
-    if (inputData.value?.schedule)
+    if (inputData.value?.schedule) 
         inputData.value.schedule.day_of_week = dayOfWeekFromDate.value
-    if (!outputData.value)
+    exportOnly.value = false
+    if (!outputData.value) 
+        await loadOutputData()
+    currentPage.value = "results"
+}
+
+// Выгрузка в Excel: результат не показываем
+const goToExport = async () => {
+    if (inputData.value?.schedule) 
+        inputData.value.schedule.day_of_week = dayOfWeekFromDate.value
+    exportOnly.value = true
+    if (!outputData.value) 
         await loadOutputData()
     currentPage.value = "results"
 }
@@ -137,9 +183,11 @@ const goToSetup = () => (currentPage.value = "setup")
             v-if="currentPage === 'setup'"
             :input-data="inputData"
             :is-loading="isLoadingInput"
-            @load-input="loadInputData"
+            @load-fleet="loadFleet"
+            @load-data="loadData"
             @create-empty="initEmptyInput"
             @calculate="goToResults"
+            @export="goToExport"
             @update:date="(d) => (selectedDate = d)"
         />
         <ResultsPage
@@ -149,6 +197,7 @@ const goToSetup = () => (currentPage.value = "setup")
             :is-loading="isLoadingOutput"
             :report-date="reportDate"
             :error="error"
+            :export-only="exportOnly"
             @back="goToSetup"
         />
     </div>

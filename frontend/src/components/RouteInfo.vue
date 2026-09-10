@@ -1,12 +1,16 @@
 <script setup>
 defineProps({
-    stop: { // Количество остановок на маршруте
+    stops: { // Количество остановок на маршруте
         type: Number,
         default: 0
     },
     stopDuration: { // Время стоянки на каждой остановке в минутах
         type: Number,
         default: 0
+    },
+    travelTime: { // Время поездки
+        type: Number, 
+        default: 0 
     },
     cycleDuration: { // Время полного круга маршрута без учёта остановок в минутах
         type: Number,
@@ -32,12 +36,12 @@ defineProps({
                 <span class="param-value">{{ stopDuration }} мин.</span>
             </div>
             <div class="param-item">
+                <span class="param-label">Движение между остановками:</span>
+                <span class="param-value">{{ travelTime }} мин.</span>
+            </div>
+            <div class="param-item">
                 <span class="param-label">Длительность цикла:</span>
                 <span class="param-value">{{ cycleDuration }} мин.</span>
-            </div>
-            <div v-if="cycleDuration && stops && stopDuration" class="param-item">
-                <span class="param-label">Общее время в пути (расчётное):</span>
-                <span class="param-value">{{ stops * stopDuration + cycleDuration }} мин.</span>
             </div>
         </div>
         <div v-if="routes.length" class="route-list">

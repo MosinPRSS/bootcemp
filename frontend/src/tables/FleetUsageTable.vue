@@ -79,8 +79,9 @@ const getProgressFunc = (percent) => {
                 <thead>
                     <tr>
                         <th>Модель</th>
-                        <th v-if="fleetUsage.some(item => 'classType' in item)">Класс</th>
+                        <th v-if="fleetUsage.some(i => 'classType' in i)">Класс</th>
                         <th>Доступно</th>
+                        <th v-if="fleetUsage.some(i => 'seatsTotal' in i)">Места (всего / сид.)</th>
                         <th>Рейсов</th>
                         <th>Загрузка</th>
                         <th class="text-end">Время работы</th>
@@ -90,15 +91,11 @@ const getProgressFunc = (percent) => {
                 <tbody>
                     <tr v-for="(item, idx) in fleetUsage" :key="idx">
                         <td><strong>{{ item.model }}</strong></td>
-                        <td v-if="fleetUsage.some(item => 'classType' in item)">
-                            {{ item.classType || '—' }}
-                        </td>
+                        <td v-if="fleetUsage.some(i => 'classType' in i)">{{ item.classType || '—' }}</td>
                         <td>{{ formatInt(item.available) }}</td>
+                        <td v-if="'seatsTotal' in item">{{ item.seatsTotal ?? '—' }} / {{ item.seatsSeated ?? '—' }}</td>
                         <td>
-                            <span :class="{
-                                'text-warning': item.trips >= item.available * 10,
-                                'text-danger':  item.trips >= item.available * 20
-                            }">
+                            <span :class="{ 'text-warning': item.trips >= item.available * 10, 'text-danger': item.trips >= item.available * 20 }">
                                 {{ formatInt(item.trips) }}
                             </span>
                         </td>
@@ -124,8 +121,9 @@ const getProgressFunc = (percent) => {
                 <tfoot>
                     <tr class="table-active">
                         <th>Итого</th>
-                        <th v-if="fleetUsage.some(item => 'classType' in item)"></th>
+                        <th v-if="fleetUsage.some(i => 'classType' in i)"></th>
                         <th>{{ formatInt(totals.available) }}</th>
+                        <th v-if="fleetUsage.some(i => 'seatsTotal' in i)"></th>
                         <th>{{ formatInt(totals.trips) }}</th>
                         <th></th>
                         <th class="text-end">{{ formatInt(totals.busyMinutes) }} мин.</th>
