@@ -2,6 +2,7 @@ package main
 
 import (
 	"bootcemp/server/config"
+	"bootcemp/server/handlers"
 	"context"
 	"log"
 	"net/http"
@@ -23,7 +24,8 @@ func main() {
 	wg, _ := errgroup.WithContext(context.Background())
 
 	mux := http.NewServeMux()
-	mux.HandleFunc("/", calculateJSON)
+	mux.Handle("/reports/", http.StripPrefix("/reports/", http.FileServer(http.Dir("./reports"))))
+	mux.HandleFunc("/", handlers.OutputTypesRouter)
 
 	const addr = "127.0.0.1:8080"
 
@@ -41,12 +43,6 @@ func main() {
 
 	_ = godotenv.Load(".env")
 
-	/*
-		DB, err := db.Init(logger)
-		if err != nil {
-			logger.ErrLogger.Fatalf("Error initializing DB: %s", err)
-		}
-	*/
 	wg.Go(func() error {
 		logger.InfLogger.Printf("Attempting to bind on %s", addr)
 
@@ -73,14 +69,5 @@ func main() {
 		logger.ErrLogger.Fatalf("Error gracufully shutting down an HTTP server: %s", err)
 	}
 
-	// to make us able to perform DB's graceful shut, we need to extract a raw sql.DB from gorm.DB wrapper
-	/*
-		if sqlDB, err := DB.DB(); err != nil {
-			if err := sqlDB.Close(); err != nil {
-				logger.ErrLogger.Fatalf("Error closing database: %s", err)
-			}
-		} else {
-			logger.ErrLogger.Fatalf("Error getting sql DB handle: %s", err)
-		}*/
 	logger.InfLogger.Print("An HTTP server has been gracefully shutted down")
 }

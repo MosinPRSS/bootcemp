@@ -1,6 +1,7 @@
-package docs
+package handlers
 
 import (
+	"bootcemp/server/module"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -8,12 +9,10 @@ import (
 	"time"
 
 	"github.com/xuri/excelize/v2"
-
-	"bootcemp/server/module"
 )
 
-// GenerateXLSX создаёт простой XLSX-отчёт и возвращает путь к файлу.
-func GenerateXLSX(data module.OutputResponse) (string, error) {
+// generateXLSX создаёт простой XLSX-отчёт и возвращает путь к файлу.
+func generateXLSX(data module.OutputResponse) (string, error) {
 	f := excelize.NewFile()
 	defer func() {
 		_ = f.Close()
