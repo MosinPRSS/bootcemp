@@ -81,19 +81,27 @@ func (r *Root) ValidateJSON(d []byte) (*Root, error) {
 }
 
 func isValidTimeSlot(slot string) bool {
-	// Проверка формата "HH-HH"
-	parts := strings.Split(slot, "-")
-	if len(parts) != 2 {
+	// разрезаем на две части
+	startStr, endStr, ok := strings.Cut(slot, "-")
+	if !ok {
 		return false
 	}
-	for _, p := range parts {
-		if len(p) != 2 {
-			return false
-		}
-		hour, err := strconv.Atoi(p)
-		if err != nil || hour < 0 || hour > 23 {
-			return false
-		}
+
+	// конвертируем в инты
+	start, err1 := strconv.Atoi(startStr)
+	end, err2 := strconv.Atoi(endStr)
+	if err1 != nil || err2 != nil {
+		return false
 	}
-	return true
+
+	// проверяем четко по тз
+	if end == start+1 && start > 0 && end <= 24 {
+		return true
+	}
+
+	// особый случай
+	if start == 24 && end == 1 {
+		return true
+	}
+	return false
 }
