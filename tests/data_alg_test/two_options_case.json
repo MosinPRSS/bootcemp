@@ -1,0 +1,22 @@
+{
+  "fleet": [
+    {"model": "ПАЗ-32053", "class": "Средний", "max_available": 100, "capacity": 45, "seats": 40, "base_cost_per_hour": 1650},
+    {"model": "ПАЗ-32052", "class": "Малый", "max_available": 90, "capacity": 32, "seats": 30, "base_cost_per_hour": 1650},
+    {"model": "ГАЗель NEXT", "class": "Особо малый", "max_available": 80, "capacity": 25, "seats": 20, "base_cost_per_hour": 1600},
+    {"model": "ГАЗель OLDSCHOOL", "class": "Малый", "max_available": 85, "capacity": 30, "seats": 25, "base_cost_per_hour": 1350}
+  ],
+  "modifiers": {
+    "region": "Дальневосточный", 
+    "season": "Осень",
+    "route_cycle_hours": 2.0,
+    "is_long": true 
+  },
+  "schedule": {
+    "day_of_week": "Вторник",
+    "daily_coefficient": 1.05,
+    "hourly_flow": {
+      "06-07": 700, "07-08": 2400, "08-09": 1400, "09-10": 900,
+      "16-17": 1600, "17-18": 2100, "18-19": 1500, "19-20": 1100
+    }
+  }
+}
