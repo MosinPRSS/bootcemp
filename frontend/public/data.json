@@ -1,0 +1,28 @@
+{
+  "modifiers": {
+    "region": "Центральный",
+    "is_far_north": false,
+    "winter_from": "11-01",
+    "winter_to": "03-31",
+    "stops": 12,
+    "stop_duration_min": 2,
+    "travel_time_min": 15,
+    "region_multiplier": 1.0,
+    "winter_surcharge": 0.15,
+    "far_north_surcharge": 0.40,
+    "service_start": "05:00",
+    "service_end": "01:00",
+    "driver_shift_hours": 8
+  },
+  "schedule": {
+    "date": "2025-01-15",
+    "date_from": "2025-01-15",
+    "date_to": "2025-01-15",
+    "day_of_week": "Среда",
+    "daily_coefficient": 1.0,
+    "hourly_flow": {
+      "05-06": { "total": 1200, "seated": 800 },
+      "06-07": { "total": 3400, "seated": 1500 }
+    }
+  }
+}

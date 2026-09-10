@@ -1,0 +1,6 @@
+{
+  "fleet": [
+    { "model": "ПАЗ-3205",   "class": "Малый",  "max_available": 10, "seats_total": 42,  "seats_seated": 23, "base_cost_per_hour": 900,  "max_machine_hours": 16 },
+    { "model": "ЛиАЗ-5292",  "class": "Большой","max_available": 6,  "seats_total": 108, "seats_seated": 25, "base_cost_per_hour": 1600, "max_machine_hours": 16 }
+  ]
+}

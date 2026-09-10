@@ -57,9 +57,11 @@ const deficitFunc = computed(() => {
 <template>
     <div :class="['card', 'text-center', 'metric-card-wrapper', `metric-card-${variant}`, deficitFunc]">
         <div class="card-body">
-            <slot name="icon">
-                <div v-if="icon" class="metric-icon" v-html="icon"></div>
-            </slot>
+            <div class="metric-icon">
+                <slot name="icon">
+                    <span v-if="icon" v-html="icon"></span>
+                </slot>
+            </div>
             <div class="metric-value">{{ formattedValue }}</div>
             <div class="metric-title">{{ title }}</div>
         </div>

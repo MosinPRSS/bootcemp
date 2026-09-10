@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import * as XLSX from 'xlsx'
 import AppHeader from '../components/AppHeader.vue'
 import ResultSummary from '../components/ResultSummary.vue'
@@ -24,11 +24,18 @@ const props = defineProps({
         type: String, 
         default: '' 
     },
+    exportOnly: { // Только экспорт?
+        type: Boolean, 
+        default: false 
+    },
     error: {  // Текст ошибки загрузки (если есть)
         type: String, 
         default: '' 
     }
 })
+
+// После отрисовки и добавления в DOM
+onMounted(() => { if (props.exportOnly) exportReport() })
 
 // loadOutput — загрузка output.json; back — возврат на страницу настроек
 const emit = defineEmits(['back'])
@@ -63,12 +70,14 @@ const result = computed(() => {
             trips: usage.trips,
             busyMinutes: usage.busy_minutes,
             baseCostPerHour: baseCost,
+            seatsTotal: fleetItem?.seats_total ?? null,
+            seatsSeated: fleetItem?.seats_seated ?? null,
             totalCost: Math.round((usage.busy_minutes / 60) * baseCost)
         }
     })
 
-    // Длительность цикла: приоритет у output (в минутах), иначе - пересчёт из input (в часах)
-    const cycleDuration = data.parameters?.route_cycle_minutes ?? (input?.modifiers?.route_cycle_hours ? input.modifiers.route_cycle_hours * 60 : 0)
+    // Длительность цикла
+    const cycleDuration = data.parameters?.route_cycle_minutes ?? input?.modifiers?.route_cycle_minutes ?? 0
 
     return {
         // День недели берём ИЗ INPUT, а не из interval (иначе было "06-07")
@@ -89,6 +98,7 @@ const result = computed(() => {
             // Если в input.modifiers есть stops/stop_duration_min - берём оттуда
             stops: input?.modifiers?.stops ?? data.parameters?.stops ?? 0,
             stopDuration: input?.modifiers?.stop_duration_min ?? data.parameters?.stop_duration_min ?? 0,
+            travelTime: input?.modifiers?.travel_time_min ?? data.parameters?.travel_time_min ?? 0,
             cycleDuration
         }
     }
@@ -129,11 +139,13 @@ const exportReport = () => {
     // колонка "Стоимость" - это расчётная стоимость из UI,
     // она может отличаться от summary.operating_cost_rub
     const fleetData = result.value.fleetUsage.map((item) => ({
-        Модель: item.model,
-        Класс: item.classType,
-        Доступно: item.available,
-        Рейсов: item.trips,
-        'Время работы (мин)': item.busyMinutes,
+        'Модель': item.model, 
+        'Класс': item.classType, 
+        'Доступно': item.available, 
+        'Рейсов': item.trips,
+        'Всего мест': item.seatsTotal, 
+        'Сидячих': item.seatsSeated,
+        'Время работы (мин)': item.busyMinutes, 
         'Расчётная стоимость (₽)': item.totalCost
     }))
     const ws3 = XLSX.utils.json_to_sheet(fleetData)
@@ -161,7 +173,7 @@ const exportReport = () => {
 <template>
     <div class="container results-page">
         <AppHeader
-            title="Результаты отчёта"
+            title="Результаты расчёта маршрута"
             :dayOfWeek="result?.dayOfWeek || ''"
             :knn="result?.knn"
             :date="result?.date || ''"
@@ -169,7 +181,7 @@ const exportReport = () => {
         <div v-if="error" class="alert alert-danger text-center">
             {{ error }}
         </div>
-        <template v-if="result">
+        <template v-if="result  && !exportOnly">
             <ResultSummary
                 :totalCost="result.totalCost"
                 :totalBuses="result.totalBuses"
@@ -181,6 +193,7 @@ const exportReport = () => {
             <RouteInfo
                 :stops="result.routeInfo.stops"
                 :stopDuration="result.routeInfo.stopDuration"
+                :travelTime="result.routeInfo.travelTime"
                 :cycleDuration="result.routeInfo.cycleDuration"
             />
             <div class="text-center mt-4 mb-5">
@@ -192,8 +205,9 @@ const exportReport = () => {
                 </button>
             </div>
         </template>
-        <div v-else class="alert alert-info text-center">
-            Нажмите кнопку выше, чтобы загрузить результаты.
+        <div v-else-if="exportOnly" class="alert alert-success text-center mt-4">
+            Отчёт выгружен в Excel.
+            <button class="btn btn-secondary ms-2" @click="emit('back')">Назад к настройкам</button>
         </div>
     </div>
 </template>
