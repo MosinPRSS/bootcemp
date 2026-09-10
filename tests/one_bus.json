@@ -1,0 +1,18 @@
+{
+  "fleet": [
+    {"model": "ЛиАЗ-6213", "class": "Особо большой", "max_available": 60, "capacity": 175, "base_cost_per_hour": 3600}
+  ],
+  "modifiers": {
+    "region": "Центральная Россия", 
+    "season": "Весна",
+    "route_cycle_hours": 2.0 
+  },
+  "schedule": {
+    "day_of_week": "Среда",
+    "daily_coefficient": 1.00,
+    "hourly_flow": {
+      "06-07": 700, "07-08": 1000, "08-09": 650, "09-10": 850,
+      "16-17": 500, "17-18": 1100, "18-19": 750, "19-20": 1100
+    }
+  }
+}

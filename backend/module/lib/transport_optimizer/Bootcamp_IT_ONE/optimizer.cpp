@@ -1,4 +1,4 @@
-#include "optimizer.h"
+#include "optimizer.hpp"
 #include <algorithm>
 #include <array>
 #include <cmath>

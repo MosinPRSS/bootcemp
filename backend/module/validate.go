@@ -15,7 +15,7 @@ func (r *Root) ValidateJSON(d []byte) (*Root, error) {
 		return nil, fmt.Errorf("Cannot validate the data!")
 	}
 
-	err := json.Unmarshal(d, &r)
+	err := json.Unmarshal(d, r)
 
 	if err != nil {
 		return nil, fmt.Errorf("Cannot unmarshal the data")
@@ -45,13 +45,14 @@ func (r *Root) ValidateJSON(d []byte) (*Root, error) {
 
 	// Проверка modifiers
 	if r.Modifiers.Region == "" {
-		return nil, fmt.Errorf("modifiers.region обязательное поле")
+		r.Modifiers.Region = "1"
 	}
 	if r.Modifiers.Season == "" {
-		return nil, fmt.Errorf("modifiers.season обязательное поле")
+		r.Modifiers.Season = "1"
 	}
 	if r.Modifiers.RouteCycleHours <= 0 {
-		return nil, fmt.Errorf("modifiers.route_cycle_hours должен быть > 0, получено %.1f", r.Modifiers.RouteCycleHours)
+		fmt.Errorf("modifiers.route_cycle_hours должен быть > 0, получено %.1f", r.Modifiers.RouteCycleHours)
+		r.Modifiers.RouteCycleHours = 1
 	}
 
 	// Проверка schedule
@@ -75,6 +76,7 @@ func (r *Root) ValidateJSON(d []byte) (*Root, error) {
 		}
 	}
 
+	fmt.Println("Проверено")
 	return r, nil
 }
 

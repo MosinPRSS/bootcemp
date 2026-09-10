@@ -16,30 +16,30 @@ import (
 )
 
 func main() {
-	// general context for stopping the server
+	// general context to shut the server gracefully
 	generalCtx, stopServer := context.WithTimeout(context.Background(), 15*time.Second)
 	defer stopServer()
 
-	// error context
+	// an error group with its goroutines context and errors handling
 	wg, _ := errgroup.WithContext(context.Background())
+
 	mux := http.NewServeMux()
+	mux.HandleFunc("/", calculateJSON)
 
-	const addr = "127.0.0.1:4308"
+	const addr = "127.0.0.1:8080"
 
-	// logging setup
+	// custom logging
 	logger := &config.Logger{
 		ErrLogger: log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile),
 		InfLogger: log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime),
 	}
 
-	// server setup
 	srv := &http.Server{
 		Addr:     addr,
 		ErrorLog: logger.ErrLogger,
 		Handler:  mux,
 	}
 
-	// environment
 	_ = godotenv.Load(".env")
 
 	DB, err := db.Init(logger)
@@ -72,6 +72,8 @@ func main() {
 	if err := srv.Shutdown(generalCtx); err != nil {
 		logger.ErrLogger.Fatalf("Error gracufully shutting down an HTTP server: %s", err)
 	}
+
+	// to make us able to perform DB's graceful shut, we need to extract a raw sql.DB from gorm.DB wrapper
 	if sqlDB, err := DB.DB(); err != nil {
 		if err := sqlDB.Close(); err != nil {
 			logger.ErrLogger.Fatalf("Error closing database: %s", err)
