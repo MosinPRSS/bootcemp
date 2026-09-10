@@ -1,0 +1,22 @@
+{
+  "fleet": [
+    {"model": "ПАЗ-32053", "class": "Средний", "max_available": 50, "capacity": 50, "seats": 50,  "base_cost_per_hour": 1650},
+    {"model": "ПАЗ-32052", "class": "Средний", "max_available": 35, "capacity": 30, "seats": 30, "base_cost_per_hour": 1650},
+    {"model": "ГАЗель NEXT", "class": "Особо малый", "max_available": 40, "capacity": 20, "seats": 20, "base_cost_per_hour": 1600},
+    {"model": "Yutong ZK6122H", "class": "Большой", "max_available": 7, "capacity": 53, "seats": 53, "base_cost_per_hour": 4000}
+  ],
+  "modifiers": {
+    "region": "Центральный", 
+    "season": "Весна",
+    "route_cycle_hours": 2.0,
+    "is_long": true,
+    "is_retrograde_Mercury": false
+  },
+  "schedule": {
+    "day_of_week": "Пятница",
+    "hourly_flow": {
+      "06-07": 700, "07-08": 2400, "08-09": 1400, "09-10": 900, "12-13": 1000,
+      "17-16": 1600, "17-18": 2100, "18-19": 1500, "23-00": 1100
+    }
+  }
+}
