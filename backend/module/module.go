@@ -1,7 +1,17 @@
-// includes math binding for module
 package module
 
+/*
+#cgo CFLAGS: -I${SRCDIR}/lib
+#cgo CXXFLAGS: -std=c++17 -I${SRCDIR}/lib
+#cgo LDFLAGS: -L${SRCDIR}/lib -lstdc++
+#include "bridge.hpp"
+*/
 import "C"
+import (
+	"encoding/json"
+	"fmt"
+	"unsafe"
+)
 
 // JSON input
 // ---
@@ -32,7 +42,7 @@ type Root struct {
 	Schedule  Schedule    `json:"schedule"`
 }
 
-// ---
+// ====================================
 
 // JSON output
 // ---
@@ -98,4 +108,14 @@ type OutputResponse struct {
 }
 
 // ---
-func (*Root) CalculateSolution() (OutputResponse, error)
+func (r *Root) CalculateSolution() (*OutputResponse, error) {
+	plainText, err := json.Marshal(r)
+	if err != nil {
+		return nil, fmt.Errorf("Something wrong with Marshalling")
+	}
+
+	// prepare string
+	cstring = C.CString(plainText)
+	defer C.free(unsafe.Pointer(cstring))
+
+}
