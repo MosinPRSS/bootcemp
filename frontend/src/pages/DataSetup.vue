@@ -24,7 +24,7 @@ const initialDate = computed(() => props.inputData?.schedule?.date || "")
 </script>
 
 <template>
-    <AppHeader title="Рассчёт маршрута" :date="initialDate" />
+    <AppHeader title="Расчёт маршрута" :date="initialDate" />
     <ul class="nav nav-tabs justify-content-center mb-3">
         <li class="nav-item"><a class="nav-link" :class="{active: tab==='fleet'}" @click="tab='fleet'">Автопарк</a></li>
         <li class="nav-item"><a class="nav-link" :class="{active: tab==='flow'}"  @click="tab='flow'">Пассажиропоток</a></li>
