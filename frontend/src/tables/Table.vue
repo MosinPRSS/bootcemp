@@ -45,9 +45,12 @@ const removeRow = (idx) => {
         <table class="table">
             <thead>
                 <tr>
-                    <th>Модель</th><th>Класс</th><th>Кол-во в автопарке</th>
-                    <th>Всего мест</th><th>Сидячих</th>
-                    <th>Стоимость машино-часа</th><th>Макс. машино-часов</th>
+                    <th>Модель</th>
+                    <th>Класс</th>
+                    <th>Кол-во в автопарке</th>
+                    <th>Всего мест</th>
+                    <th>Сидячих</th>
+                    <th>Стоимость машино-часа</th>                    
                     <th style="width: 50px;"></th>
                 </tr>
             </thead>
@@ -77,17 +80,6 @@ const removeRow = (idx) => {
                     <td>
                         <input v-model.number="vehicle.base_cost_per_hour" type="number" min="0" class="form-control" />
                     </td>
-                    <td>
-                        <input
-                            v-model.number="vehicle.max_machine_hours"
-                            @input="clampHours(vehicle)"
-                            type="number"
-                            min="0"
-                            :max="MAX_SHIFT_HOURS"
-                            step="1"
-                            class="form-control"
-                        />
-                    </td>
                     <td class="text-center align-middle">
                         <button
                             class="btn btn-sm btn-outline-danger"
@@ -103,8 +95,7 @@ const removeRow = (idx) => {
         <div class="d-flex justify-content-between align-items-center mt-2">
             <button class="btn btn-sm btn-outline-success" @click="addRow">
                 + Добавить ТС
-            </button>
-            <small class="table-hint">Макс. машино-часов на ТС — не более {{ MAX_SHIFT_HOURS }} (смена водителя)</small>
+            </button>            
         </div>
     </div>
 </template>
