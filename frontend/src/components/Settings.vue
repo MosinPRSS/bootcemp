@@ -1,19 +1,22 @@
 <script setup>
-import { ref, computed } from "vue"
+import { ref, computed, watch } from "vue"
 
 const props = defineProps({
     title: { type: String, default: "" },
     modifiers: { type: Object, default: () => ({}) },
-    schedule: { type: Object, default: () => ({}) }
+    schedule: { type: Object, default: () => ({}) },
+    initialDate: { type: String, default: '' }
 })
 
-const emit = defineEmits(["calculate"])
+const emit = defineEmits(["calculate", "update:date"])
 
 const calcType = ref("")
 const selectedHour = ref(null)
 const selectedWeekday = ref(null)
-const selectedDate = ref("")
+const selectedDate = ref(props.initialDate || "")
 const isFarNorth = ref(props.modifiers?.region === "Крайний Север")
+
+watch(selectedDate, (val) => emit("update:date", val))
 
 const hourOptions = computed(() => {
     const options = []

@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "bootstrap": "^5.3.8",
-    "vue": "^3.5.41"
+    "vue": "^3.5.41",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.8",
