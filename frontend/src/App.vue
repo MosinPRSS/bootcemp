@@ -133,23 +133,6 @@ const goToSetup = () => (currentPage.value = "setup")
 <template>
     <div class="app-container">
         <div v-if="error" class="alert alert-danger m-4">{{ error }}</div>
-        <nav class="app-nav">
-            <button
-                class="nav-btn"
-                :class="{ active: currentPage === 'setup' }"
-                @click="goToSetup"
-            >
-                Входные данные
-            </button>
-            <button
-                class="nav-btn"
-                :class="{ active: currentPage === 'results' }"
-                @click="goToResults"
-                :disabled="isLoadingOutput"
-            >
-                {{ isLoadingOutput ? "Загрузка..." : "Результаты отчёта" }}
-            </button>
-        </nav>
         <DataSetup
             v-if="currentPage === 'setup'"
             :input-data="inputData"
