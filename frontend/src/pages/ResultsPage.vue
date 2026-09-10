@@ -1,6 +1,6 @@
 <script setup>
 import { computed, onMounted } from 'vue'
-import * as XLSX from 'xlsx'
+import { downloadExcel } from '../api'
 import AppHeader from '../components/AppHeader.vue'
 import ResultSummary from '../components/ResultSummary.vue'
 import HourlyScheduleTable from '../tables/HourlyScheduleTable.vue'
@@ -33,9 +33,6 @@ const props = defineProps({
         default: '' 
     }
 })
-
-// После отрисовки и добавления в DOM
-onMounted(() => { if (props.exportOnly) exportReport() })
 
 // loadOutput — загрузка output.json; back — возврат на страницу настроек
 const emit = defineEmits(['back'])
@@ -104,69 +101,17 @@ const result = computed(() => {
     }
 })
 
-// Экспорт в Excel (4 листа)
-const exportReport = () => {
-    if (!result.value)
-        return
-    const wb = XLSX.utils.book_new()
-
-    // Сводка
-    const summaryData = [
-        ['Дата расчёта', result.value.date],
-        ['День недели', result.value.dayOfWeek],
-        ['Коэффициент дня', result.value.knn],
-        [],
-        ['Показатель', 'Значение'],
-        ['Стоимость (₽)', result.value.totalCost],
-        ['Пассажиров перевезено', result.value.servedPassengers],
-        ['Дефицит', result.value.deficit]
-    ]
-    const ws1 = XLSX.utils.aoa_to_sheet(summaryData)
-    XLSX.utils.book_append_sheet(wb, ws1, 'Сводка')
-
-    // Расписание по часам
-    const scheduleData = result.value.hourlyData.map((item) => ({
-        Интервал: item.interval,
-        Спрос: item.demand,
-        Вместимость: item.offered_capacity,
-        Обслужено: item.demand - item.shortage,
-        Дефицит: item.shortage
-    }))
-    const ws2 = XLSX.utils.json_to_sheet(scheduleData)
-    XLSX.utils.book_append_sheet(wb, ws2, 'Расписание')
-
-    // Автопарк
-    // колонка "Стоимость" - это расчётная стоимость из UI,
-    // она может отличаться от summary.operating_cost_rub
-    const fleetData = result.value.fleetUsage.map((item) => ({
-        'Модель': item.model, 
-        'Класс': item.classType, 
-        'Доступно': item.available, 
-        'Рейсов': item.trips,
-        'Всего мест': item.seatsTotal, 
-        'Сидячих': item.seatsSeated,
-        'Время работы (мин)': item.busyMinutes, 
-        'Расчётная стоимость (₽)': item.totalCost
-    }))
-    const ws3 = XLSX.utils.json_to_sheet(fleetData)
-    XLSX.utils.book_append_sheet(wb, ws3, 'Автопарк')
-
-    // Параметры расчёта
-    const paramsData = [
-        ['Параметр', 'Значение'],
-        ['Регион', props.inputData?.modifiers?.region ?? '—'],
-        ['Сезон', props.inputData?.modifiers?.season ?? '—'],
-        ['Коэф. дня', props.outputData?.parameters?.daily_coefficient ?? '—'],
-        ['Коэф. региона', props.outputData?.parameters?.region_multiplier ?? '—'],
-        ['Коэф. сезона', props.outputData?.parameters?.season_multiplier ?? '—'],
-        ['Цикл маршрута (мин)', result.value.routeInfo.cycleDuration]
-    ]
-    const ws4 = XLSX.utils.aoa_to_sheet(paramsData)
-    XLSX.utils.book_append_sheet(wb, ws4, 'Параметры')
-
-    // Имя файла с датой - чтобы отчёты не перезаписывали друг друга
-    const isoDate = props.reportDate || props.inputData?.schedule?.date || 'no-date'
-    XLSX.writeFile(wb, `transport_report_${isoDate}.xlsx`)
+// Экспорт в Excel
+const exportExcel = async () => {
+    const iso = props.reportDate || props.inputData?.schedule?.date || "no-date"
+    try 
+    {
+        await downloadExcel(props.inputData, `transport_report_${iso}.xlsx`)
+    } 
+    catch (e) 
+    {
+        alert(`Ошибка выгрузки: ${e.message}`)
+    }
 }
 </script>
 
@@ -197,7 +142,7 @@ const exportReport = () => {
                 :cycleDuration="result.routeInfo.cycleDuration"
             />
             <div class="text-center mt-4 mb-5">
-                <button class="btn btn-lg btn-success me-2" @click="exportReport">
+                <button class="btn btn-lg btn-success me-2" @click="exportExcel">
                     Экспорт отчёта в Excel
                 </button>
                 <button class="btn btn-lg btn-secondary" @click="emit('back')">

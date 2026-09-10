@@ -1,5 +1,6 @@
 <script setup>
 import { computed, ref } from "vue"
+import { calculateReport, downloadExcel } from "./api"
 import ResultsPage from "./pages/ResultsPage.vue"
 import DataSetup from "./pages/DataSetup.vue"
 
@@ -130,16 +131,17 @@ const initEmptyInput = () => {
     selectedDate.value = inputData.value.schedule.date
 }
 
-// Загрузка output.json (автоматически, без кнопки)
+// Загрузка output.json
 const loadOutputData = async () => {
+    if (!inputData.value) 
+        return
+
     isLoadingOutput.value = true
     error.value = null
+    
     try 
     {
-        const response = await fetch("/output.json")
-        if (!response.ok)
-            throw new Error(`HTTP ${response.status}: output.json`)
-        outputData.value = await response.json()
+        outputData.value = await calculateReport(inputData.value)
     } 
     catch (e) 
     {
@@ -154,22 +156,35 @@ const loadOutputData = async () => {
 // Переход к результатам 
 const goToResults = async () => {
     // Подставляем актуальный день недели из выбранной даты
-    if (inputData.value?.schedule) 
+    if (inputData.value?.schedule)
         inputData.value.schedule.day_of_week = dayOfWeekFromDate.value
     exportOnly.value = false
-    if (!outputData.value) 
-        await loadOutputData()
-    currentPage.value = "results"
+    await loadOutputData()
+    if (!error.value) 
+        currentPage.value = "results"
 }
 
 // Выгрузка в Excel: результат не показываем
 const goToExport = async () => {
-    if (inputData.value?.schedule) 
+    if (inputData.value?.schedule)
         inputData.value.schedule.day_of_week = dayOfWeekFromDate.value
-    exportOnly.value = true
-    if (!outputData.value) 
-        await loadOutputData()
-    currentPage.value = "results"
+
+    error.value = null
+    isLoadingOutput.value = true
+    
+    try 
+    {
+        const iso = selectedDate.value || inputData.value?.schedule?.date || "no-date"
+        await downloadExcel(inputData.value, `transport_report_${iso}.xlsx`)
+    } 
+    catch (e) 
+    {
+        error.value = e.message
+    } 
+    finally 
+    {
+        isLoadingOutput.value = false
+    }
 }
 
 // Возврат на настройки
