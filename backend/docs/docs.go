@@ -5,6 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
+	"time"
+
 	"github.com/xuri/excelize/v2"
 
 	"bootcemp/server/module"
@@ -159,7 +161,9 @@ func GenerateXLSX(data module.OutputResponse) (string, error) {
 	if err := os.MkdirAll("reports", 0o755); err != nil {
 		return "", fmt.Errorf("не удалось создать директорию reports: %w", err)
 	}
-	filePath := filepath.Join("reports", "report.xlsx")
+
+	filename := "report_" + time.Now().String() + ".xlsx"
+	filePath := filepath.Join("reports", filename)
 	if err := f.SaveAs(filePath); err != nil {
 		return "", fmt.Errorf("не удалось сохранить файл %q: %w", filePath, err)
 	}
