@@ -6,6 +6,6 @@ func GeneratePDF() {}
 
 func GenerateXLSX() {}
 
-func GeneratePlain() {}
+func GenerateCSV() {}
 
 func GenerateJSON() {}

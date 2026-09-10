@@ -1,6 +1,5 @@
 ﻿#pragma once
 
-#include <io.h>
 #include <fcntl.h>
 #include <iostream>
 #include <fstream>
@@ -10,7 +9,6 @@
 #include <regex>
 #include <utility>
 #include <locale.h>
-#include <Windows.h>
 #include <json/json.h>
 
 using namespace std;
