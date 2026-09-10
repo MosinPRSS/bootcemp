@@ -1,8 +1,12 @@
 {
   "fleet": [
-    {"model": "ПАЗ-32053", "class": "Средний", "max_available": 50, "capacity": 50, "seats": 50,  "base_cost_per_hour": 1650},
-    {"model": "ПАЗ-32052", "class": "Средний", "max_available": 35, "capacity": 30, "seats": 30, "base_cost_per_hour": 1650},
-    {"model": "ГАЗель NEXT", "class": "Особо малый", "max_available": 40, "capacity": 20, "seats": 20, "base_cost_per_hour": 1600},
+    {"model": "ПАЗ-32053", "class": "Особо большой", "max_available": 10, "capacity": 80, "seats": 80, "base_cost_per_hour": 2650},
+    {"model": "ПАЗ-32052", "class": "Средний", "max_available": 45, "capacity": 30, "seats": 30, "base_cost_per_hour": 2150},
+    {"model": "ГАЗель NEXT", "class": "Большой", "max_available": 32, "capacity": 50, "seats": 50, "base_cost_per_hour": 1600},
+    {"model": "ГАЗель OLDSCHOOL", "class": "Малый", "max_available": 50, "capacity": 34, "seats": 34, "base_cost_per_hour": 1350},
+    {"model": "ЛиАЗ-6213", "class": "Особо большой", "max_available": 30, "capacity": 75, "seats": 75, "base_cost_per_hour": 3600},
+    {"model": "ЛиАЗ-6224", "class": "Большой", "max_available": 30, "capacity": 50, "seats": 50, "base_cost_per_hour": 2600},
+    {"model": "ЛиАЗ-5263", "class": "Особо большой", "max_available": 30, "capacity": 175, "seats": 175, "base_cost_per_hour": 3600},
     {"model": "Yutong ZK6122H", "class": "Большой", "max_available": 7, "capacity": 53, "seats": 53, "base_cost_per_hour": 4000}
   ],
   "modifiers": {
