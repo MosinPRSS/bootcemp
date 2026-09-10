@@ -2,7 +2,6 @@ package main
 
 import (
 	"bootcemp/server/config"
-	"bootcemp/server/db"
 	"context"
 	"log"
 	"net/http"
@@ -42,11 +41,12 @@ func main() {
 
 	_ = godotenv.Load(".env")
 
-	DB, err := db.Init(logger)
-	if err != nil {
-		logger.ErrLogger.Fatalf("Error initializing DB: %s", err)
-	}
-
+	/*
+		DB, err := db.Init(logger)
+		if err != nil {
+			logger.ErrLogger.Fatalf("Error initializing DB: %s", err)
+		}
+	*/
 	wg.Go(func() error {
 		logger.InfLogger.Printf("Attempting to bind on %s", addr)
 
@@ -74,12 +74,13 @@ func main() {
 	}
 
 	// to make us able to perform DB's graceful shut, we need to extract a raw sql.DB from gorm.DB wrapper
-	if sqlDB, err := DB.DB(); err != nil {
-		if err := sqlDB.Close(); err != nil {
-			logger.ErrLogger.Fatalf("Error closing database: %s", err)
-		}
-	} else {
-		logger.ErrLogger.Fatalf("Error getting sql DB handle: %s", err)
-	}
+	/*
+		if sqlDB, err := DB.DB(); err != nil {
+			if err := sqlDB.Close(); err != nil {
+				logger.ErrLogger.Fatalf("Error closing database: %s", err)
+			}
+		} else {
+			logger.ErrLogger.Fatalf("Error getting sql DB handle: %s", err)
+		}*/
 	logger.InfLogger.Print("An HTTP server has been gracefully shutted down")
 }
