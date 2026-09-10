@@ -1,0 +1,295 @@
+﻿{
+  "cost_status": "OPTIMAL",
+  "fleet_usage": [
+    {
+      "busy_minutes": 2090,
+      "max_available": 15,
+      "model": "ЛиАЗ-6213",
+      "trips": 209
+    },
+    {
+      "busy_minutes": 1010,
+      "max_available": 30,
+      "model": "ПАЗ-32053",
+      "trips": 101
+    },
+    {
+      "busy_minutes": 20,
+      "max_available": 37,
+      "model": "ГАЗель NEXT",
+      "trips": 2
+    },
+    {
+      "busy_minutes": 0,
+      "max_available": 7,
+      "model": "Yutong ZK6122H",
+      "trips": 0
+    }
+  ],
+  "optimality_proven": true,
+  "parameters": {
+    "daily_coefficient": 1.1,
+    "region_multiplier": 1.4,
+    "route_cycle_minutes": 10,
+    "season_multiplier": 1.125
+  },
+  "primary_status": "OPTIMAL",
+  "schedule": [
+    {
+      "assigned": [
+        {
+          "capacity": 175,
+          "departures": [
+            {
+              "time": "06:00",
+              "trips": 15
+            },
+            {
+              "time": "06:10",
+              "trips": 15
+            },
+            {
+              "time": "06:20",
+              "trips": 15
+            },
+            {
+              "time": "06:30",
+              "trips": 15
+            },
+            {
+              "time": "06:40",
+              "trips": 15
+            },
+            {
+              "time": "06:50",
+              "trips": 15
+            }
+          ],
+          "model": "ЛиАЗ-6213",
+          "offered_capacity": 15750,
+          "trips": 90
+        },
+        {
+          "capacity": 40,
+          "departures": [
+            {
+              "time": "06:20",
+              "trips": 11
+            },
+            {
+              "time": "06:30",
+              "trips": 30
+            },
+            {
+              "time": "06:40",
+              "trips": 30
+            },
+            {
+              "time": "06:50",
+              "trips": 30
+            }
+          ],
+          "model": "ПАЗ-32053",
+          "offered_capacity": 4040,
+          "trips": 101
+        },
+        {
+          "capacity": 20,
+          "departures": [
+            {
+              "time": "06:50",
+              "trips": 1
+            }
+          ],
+          "model": "ГАЗель NEXT",
+          "offered_capacity": 20,
+          "trips": 1
+        }
+      ],
+      "demand": 19800,
+      "interval": "06-07",
+      "offered_capacity": 19810,
+      "shortage": 0
+    },
+    {
+      "assigned": [
+        {
+          "capacity": 175,
+          "departures": [
+            {
+              "time": "07:40",
+              "trips": 7
+            },
+            {
+              "time": "07:50",
+              "trips": 15
+            }
+          ],
+          "model": "ЛиАЗ-6213",
+          "offered_capacity": 3850,
+          "trips": 22
+        }
+      ],
+      "demand": 3850,
+      "interval": "07-08",
+      "offered_capacity": 3850,
+      "shortage": 0
+    },
+    {
+      "assigned": [
+        {
+          "capacity": 175,
+          "departures": [
+            {
+              "time": "08:40",
+              "trips": 1
+            },
+            {
+              "time": "08:50",
+              "trips": 15
+            }
+          ],
+          "model": "ЛиАЗ-6213",
+          "offered_capacity": 2800,
+          "trips": 16
+        }
+      ],
+      "demand": 2750,
+      "interval": "08-09",
+      "offered_capacity": 2800,
+      "shortage": 0
+    },
+    {
+      "assigned": [
+        {
+          "capacity": 175,
+          "departures": [
+            {
+              "time": "09:50",
+              "trips": 13
+            }
+          ],
+          "model": "ЛиАЗ-6213",
+          "offered_capacity": 2275,
+          "trips": 13
+        }
+      ],
+      "demand": 2200,
+      "interval": "09-10",
+      "offered_capacity": 2275,
+      "shortage": 0
+    },
+    {
+      "assigned": [
+        {
+          "capacity": 175,
+          "departures": [
+            {
+              "time": "16:40",
+              "trips": 2
+            },
+            {
+              "time": "16:50",
+              "trips": 15
+            }
+          ],
+          "model": "ЛиАЗ-6213",
+          "offered_capacity": 2975,
+          "trips": 17
+        }
+      ],
+      "demand": 2970,
+      "interval": "16-17",
+      "offered_capacity": 2975,
+      "shortage": 0
+    },
+    {
+      "assigned": [
+        {
+          "capacity": 175,
+          "departures": [
+            {
+              "time": "17:40",
+              "trips": 5
+            },
+            {
+              "time": "17:50",
+              "trips": 15
+            }
+          ],
+          "model": "ЛиАЗ-6213",
+          "offered_capacity": 3500,
+          "trips": 20
+        },
+        {
+          "capacity": 20,
+          "departures": [
+            {
+              "time": "17:50",
+              "trips": 1
+            }
+          ],
+          "model": "ГАЗель NEXT",
+          "offered_capacity": 20,
+          "trips": 1
+        }
+      ],
+      "demand": 3520,
+      "interval": "17-18",
+      "offered_capacity": 3520,
+      "shortage": 0
+    },
+    {
+      "assigned": [
+        {
+          "capacity": 175,
+          "departures": [
+            {
+              "time": "18:40",
+              "trips": 2
+            },
+            {
+              "time": "18:50",
+              "trips": 15
+            }
+          ],
+          "model": "ЛиАЗ-6213",
+          "offered_capacity": 2975,
+          "trips": 17
+        }
+      ],
+      "demand": 2860,
+      "interval": "18-19",
+      "offered_capacity": 2975,
+      "shortage": 0
+    },
+    {
+      "assigned": [
+        {
+          "capacity": 175,
+          "departures": [
+            {
+              "time": "19:50",
+              "trips": 14
+            }
+          ],
+          "model": "ЛиАЗ-6213",
+          "offered_capacity": 2450,
+          "trips": 14
+        }
+      ],
+      "demand": 2420,
+      "interval": "19-20",
+      "offered_capacity": 2450,
+      "shortage": 0
+    }
+  ],
+  "status": "OPTIMAL",
+  "summary": {
+    "all_demand_satisfied": true,
+    "operating_cost_rub": 254047.51,
+    "shortage_passengers": 0,
+    "total_demand": 40370,
+    "transported_passengers": 40370
+  }
+}

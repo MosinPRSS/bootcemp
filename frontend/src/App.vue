@@ -103,5 +103,46 @@ const goToSetup = () => currentPage.value = "setup"
 </template>
 
 <style scoped>
+.app-container {
+  min-height: 100vh;
+  padding: 20px;
+}
 
+.app-nav {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 30px;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-btn {
+  background: transparent;
+  color: var(--text);
+  border: 1px solid transparent;
+  padding: 10px 25px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 500;
+}
+
+.nav-btn:hover:not(:disabled) {
+  color: #fff;
+  border-color: var(--accent-border);
+}
+
+.nav-btn.active {
+  background: var(--accent-bg);
+  color: #fff;
+  border-color: var(--accent);
+}
+
+.nav-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
 </style>

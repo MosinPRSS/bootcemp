@@ -14,7 +14,7 @@ const props = defineProps({
                 "assigned" in item && // Массив назначенных ТС в этот час
                 "totalCapacity" in item && // Общая вместимость всех назначенных ТС
                 "served" in item && // Количество фактически обслуженных пассажиров
-                "deficit" in item // Де
+                "deficit" in item // Дефицит
             })
         }
     },
@@ -118,5 +118,10 @@ const formatAssigned = (assigned) => {
 </template>
 
 <style scoped>
-
+.schedule-title {
+  border-left: 4px solid var(--accent);
+  padding-left: 15px;
+  margin-bottom: 20px;
+  color: #fff;
+}
 </style>
