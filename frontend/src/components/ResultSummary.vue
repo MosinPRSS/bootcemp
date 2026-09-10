@@ -1,7 +1,7 @@
 <script setup>
 import MetricCard from '../cards/MetricCard.vue'
 
-const props = defineProps({
+defineProps({
     totalCost: { // Итоговая стоимость
         type: Number,
         required: true

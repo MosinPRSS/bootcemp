@@ -11,6 +11,7 @@
     "route_cycle_hours": 2.0 
   },
   "schedule": {
+    "date": "2026-09-08",
     "day_of_week": "Пятница",
     "daily_coefficient": 1.10,
     "hourly_flow": {
