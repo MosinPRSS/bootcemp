@@ -15,7 +15,7 @@ func (r *Root) ValidateJSON(d []byte) (*Root, error) {
 		return nil, fmt.Errorf("Cannot validate the data!")
 	}
 
-	err := json.Unmarshal(d, &r)
+	err := json.Unmarshal(d, r)
 
 	if err != nil {
 		return nil, fmt.Errorf("Cannot unmarshal the data")
