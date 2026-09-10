@@ -1,10 +1,11 @@
 package module
 
 /*
-#cgo CFLAGS: -I${SRCDIR}/lib
-#cgo CXXFLAGS: -std=c++17 -I${SRCDIR}/lib
-#cgo LDFLAGS: -L${SRCDIR}/lib -lstdc++
+#cgo CFLAGS: -I${SRCDIR}/lib/transport_optimizer/Bootcamp_IT_ONE
+#cgo LDFLAGS: -L${SRCDIR}/lib/transport_optimizer/Bootcamp_IT_ONE -Wl,-rpath,${SRCDIR}/lib/transport_optimizer/Bootcamp_IT_ONE -ltransport_optimizer
+
 #include "bridge.hpp"
+#include <stdlib.h>
 */
 import "C"
 import (
@@ -111,11 +112,24 @@ type OutputResponse struct {
 func (r *Root) CalculateSolution() (*OutputResponse, error) {
 	plainText, err := json.Marshal(r)
 	if err != nil {
-		return nil, fmt.Errorf("Something wrong with Marshalling")
+		return nil, fmt.Errorf("failed to marshal input: %w", err)
 	}
 
-	// prepare string
-	cstring = C.CString(plainText)
+	cstring := C.CString(string(plainText))
 	defer C.free(unsafe.Pointer(cstring))
 
+	result := C.exec_math_magic(cstring)
+	if result == nil {
+		return nil, fmt.Errorf("optimizer returned null")
+	}
+	defer C.free_mem(result)
+
+	output := C.GoString(result)
+
+	var response OutputResponse
+	if err := json.Unmarshal([]byte(output), &response); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal optimizer response: %w", err)
+	}
+
+	return &response, nil
 }

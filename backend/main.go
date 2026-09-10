@@ -24,7 +24,7 @@ func main() {
 	wg, _ := errgroup.WithContext(context.Background())
 	mux := http.NewServeMux()
 
-	const addr = "127.0.0.1:4308"
+	const addr = "127.0.0.1:8080"
 
 	// logging setup
 	logger := &config.Logger{

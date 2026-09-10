@@ -75,6 +75,7 @@ func (r *Root) ValidateJSON(d []byte) (*Root, error) {
 		}
 	}
 
+	fmt.Println("Проверено")
 	return r, nil
 }
 
