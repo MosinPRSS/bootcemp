@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch } from "vue"
+import { ref, computed, watch } from "vue"
 
 const props = defineProps({
     flow: {
@@ -11,13 +11,30 @@ const props = defineProps({
 
 const rows = ref([])
 
+const allSlots = computed(() => {
+    const slots = []
+    for (let h = 1; h <= 23; h++) slots.push(`${h}-${h + 1}`)
+    slots.push('24-1')
+    return slots
+})
+
+const canAddRow = computed(() => {
+    const used = new Set(rows.value.map(r => r.slot))
+    return allSlots.value.some(s => !used.has(s))
+})
+
 function loadFromProps() {
     rows.value = Object.entries(props.flow || {})
         .map(([slot, v]) => ({
             slot,
             value: typeof v === "number" ? v : (v?.total ?? 0)
         }))
-        .sort((a, b) => parseInt(a.slot) - parseInt(b.slot))
+        .sort((a, b) => {
+            // 24-1 всегда в конце
+            if (a.slot === '24-1') return 1
+            if (b.slot === '24-1') return -1
+            return parseInt(a.slot) - parseInt(b.slot)
+        })
 }
 
 function syncToProps() {
@@ -34,17 +51,32 @@ function syncToProps() {
 watch(() => props.flow, loadFromProps, { immediate: true })
 
 const isValidSlot = (s) => {
-    const [a, b] = String(s).split("-")
+    const str = String(s)
+
+    if (str === '24-1') return true
+
+    const [a, b] = str.split("-")
     const start = Number(a), end = Number(b)
+
     return Number.isInteger(start) && Number.isInteger(end)
-        && end === start + 1 && start >= 1 && start <= 23
+        && start >= 1 && start <= 23
+        && end === start + 1 && end <= 24
 }
 
 const addRow = () => {
+    if (!canAddRow.value) return
+
     const used = new Set(rows.value.map(r => r.slot))
+
     let h = 1
-    while (used.has(`${h}-${h + 1}`) && h < 23) h++
-    rows.value.push({ slot: `${h}-${h + 1}`, value: 0 })
+    while (h <= 23 && used.has(`${h}-${h + 1}`)) h++
+
+    if (h <= 23) {
+        rows.value.push({ slot: `${h}-${h + 1}`, value: 0 })
+    } else if (!used.has('24-1')) {
+        rows.value.push({ slot: '24-1', value: 0 })
+    }
+
     syncToProps()
 }
 
@@ -75,7 +107,7 @@ const slotClass = (slot) => isValidSlot(slot) ? "" : "is-invalid"
                             type="text"
                             class="form-control"
                             :class="slotClass(row.slot)"
-                            placeholder="6-7"
+                            placeholder="5-6"
                             @change="syncToProps"
                         />
                     </td>
@@ -99,11 +131,15 @@ const slotClass = (slot) => isValidSlot(slot) ? "" : "is-invalid"
             </tbody>
         </table>
         <div class="d-flex justify-content-between align-items-center mt-2">
-            <button class="btn btn-sm btn-outline-success" @click="addRow">
+            <button
+                class="btn btn-sm btn-outline-success"
+                @click="addRow"
+                :disabled="!canAddRow"
+            >
                 + Добавить интервал
             </button>
             <span class="table-hint">
-                Формат: «6-7», «7-8», …, «23-24». Начальный час — от 1 до 23.
+                Формат: «1-2», «2-3», …, «23-24», «24-1» (переполнение через полночь).
             </span>
         </div>
     </div>
@@ -132,4 +168,11 @@ const slotClass = (slot) => isValidSlot(slot) ? "" : "is-invalid"
     box-shadow: 0 0 0 0.25rem rgba(170, 59, 255, 0.25);
 }
 .table-hint { color: var(--text); font-size: 13px; }
+.flow-table .btn:disabled {
+    background-color: #2a2f36;
+    border-color: #3a3f46;
+    color: #6c757d;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
 </style>
