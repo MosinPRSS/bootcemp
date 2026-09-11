@@ -34,20 +34,25 @@ function toBackendPayload(input)
 
     const m = input.modifiers
     const s = input.schedule
+    const isLong = !!m.is_long_ride
 
     return {
-        fleet: input.fleet.map((v) => ({
-            model: v.model,
-            class: v.class,
-            max_available: v.max_available,
-            capacity: v.seats_total,
-            seats: v.seats_seated,
-            base_cost_per_hour: v.base_cost_per_hour,
-        })),
+        fleet: input.fleet.map((v) => {
+            const item = {
+                model: v.model,
+                class: v.class,
+                max_available: v.max_available,
+                base_cost_per_hour: v.base_cost_per_hour,
+            }
+            item.seats = v.seats_total
+            item.capacity = v.seats_total
+            return item
+        }),
         modifiers: {
             region: m.region || "1",
-            season: seasonName(m, s.date),
+            season: m.season || seasonName(m, s.date),
             route_cycle_hours: cycle(m) / 60,
+            is_long_ride: isLong,
         },
         schedule: {
             day_of_week: s.day_of_week,

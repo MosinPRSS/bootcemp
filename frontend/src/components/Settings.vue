@@ -18,7 +18,6 @@ const regions = [
     "Крайний Север"
 ]
 
-// Коэффициент региона
 const REGION_MULTIPLIERS = {
     "Дальневосточный": 1.3,
     "Крайний Север": 1.3
@@ -29,9 +28,6 @@ function regionMultiplier(region) {
     return REGION_MULTIPLIERS[region] ?? DEFAULT_REGION_MULTIPLIER
 }
 
-// При смене региона — сразу обновляем коэффициент.
-// Если пользователь потом поменяет число вручную, оно останется до следующей
-// смены региона.
 watch(() => props.modifiers.region, (r) => {
     if (r) props.modifiers.region_multiplier = regionMultiplier(r)
 })
@@ -53,10 +49,50 @@ const calcMode = computed({
     set: v => (props.modifiers.calc_mode = v)
 })
 
+// День недели живёт в schedule.day_of_week — именно его читает api.js
+// (payload.schedule.day_of_week) и рендерит AppHeader на ResultsPage.
+// ВАЖНО: не "modifiers.day" — то поле никуда не уходит.
+const dayOfWeek = computed({
+    get: () => props.schedule?.day_of_week || "",
+    set: v => { if (props.schedule) props.schedule.day_of_week = v }
+})
+
+const dailyCoefficient = computed({
+    get: () => props.schedule?.daily_coefficient ?? 1.0,
+    set: v => {
+        if (!props.schedule) return
+        const n = Number(v)
+        props.schedule.daily_coefficient = Number.isFinite(n) && n > 0 ? n : 1.0
+    }
+})
+
+function weekdayFromIso(iso) {
+    if (!iso) return ""
+    const wd = new Date(iso).toLocaleDateString("ru-RU", { weekday: "long" })
+    return wd.charAt(0).toUpperCase() + wd.slice(1)
+}
+
+const effectiveDate = computed(() =>
+    calcMode.value === "range"
+        ? props.schedule?.date_from
+        : props.schedule?.date
+)
+
+watch(effectiveDate, (date, prev) => {
+    if (!date) return
+    const expectedPrev = weekdayFromIso(prev)
+    const current = props.schedule?.day_of_week || ""
+    // Если текущее значение пустое ИЛИ совпадает с тем, что мы бы
+    // поставили из прошлой даты — значит его не трогали руками.
+    if (!current || current === expectedPrev) {
+        props.schedule.day_of_week = weekdayFromIso(date)
+    }
+}, { immediate: true })
+
 const cycleHours = computed(() => {
-    const s  = +props.modifiers.stops              || 0
-    const sd = +props.modifiers.stop_duration_min  || 0
-    const t  = +props.modifiers.travel_time_min    || 0
+    const s  = +props.modifiers.stops             || 0
+    const sd = +props.modifiers.stop_duration_min || 0
+    const t  = +props.modifiers.travel_time_min   || 0
 
     const minutes = s < 2 ? 0 : (s - 1) * t + (s - 2) * sd
     const hours = +(minutes / 60).toFixed(2)
@@ -88,12 +124,13 @@ const onDate = () =>
             </div>
 
             <div class="field">
-                <label>Коэф. региона</label>
+                <label>Суточный коэффициент</label>
                 <input
                     type="number"
                     step="0.01"
+                    min="0.01"
                     class="form-control"
-                    v-model.number="modifiers.region_multiplier"
+                    v-model.number="dailyCoefficient"
                 />
             </div>
 
@@ -107,8 +144,8 @@ const onDate = () =>
 
             <div class="field">
                 <label>День недели</label>
-                <select class="form-select" v-model="modifiers.day">
-                    <option value="" disabled selected>День недели не выбран</option>
+                <select class="form-select" v-model="dayOfWeek">
+                    <option value="" disabled>День недели не выбран</option>
                     <option v-for="d in daysOfWeek" :key="d" :value="d">{{ d }}</option>
                 </select>
             </div>

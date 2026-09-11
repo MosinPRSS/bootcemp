@@ -41,8 +41,6 @@ const reportDate = computed(() => {
     return new Date().toISOString().slice(0, 10)
 })
 
-// Создание пустого шаблона (ручной ввод)
-// Структура полностью совпадает с input.json, только значения пустые
 const createEmptyInput = () => ({
     fleet: [
         {
@@ -118,9 +116,12 @@ const goToResults = async (data) => {
             selectedDate.value = data.schedule.date
     }
 
-    // Подставляем актуальный день недели из выбранной даты
-    if (inputData.value?.schedule && dayOfWeekFromDate.value)
+    
+    if (inputData.value?.schedule
+        && !inputData.value.schedule.day_of_week
+        && dayOfWeekFromDate.value) {
         inputData.value.schedule.day_of_week = dayOfWeekFromDate.value
+    }
 
     exportOnly.value = false
     await loadOutputData()
@@ -138,8 +139,11 @@ const goToExport = async (data) => {
             selectedDate.value = data.schedule.date
     }
 
-    if (inputData.value?.schedule && dayOfWeekFromDate.value)
+    if (inputData.value?.schedule
+        && !inputData.value.schedule.day_of_week
+        && dayOfWeekFromDate.value) {
         inputData.value.schedule.day_of_week = dayOfWeekFromDate.value
+    }
 
     error.value = null
     isLoadingOutput.value = true
