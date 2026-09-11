@@ -23,18 +23,26 @@ const canAddRow = computed(() => {
     return allSlots.value.some(s => !used.has(s))
 })
 
+function normalizeSlot(slot) {
+    const [a, b] = String(slot).split("-")
+    const start = Number(a), end = Number(b)
+    if (!Number.isInteger(start) || !Number.isInteger(end)) return String(slot)
+    return `${start}-${end}`
+}
+
+function sortRows(a, b) {
+    if (a.slot === '24-1') return 1
+    if (b.slot === '24-1') return -1
+    return parseInt(a.slot) - parseInt(b.slot)
+}
+
 function loadFromProps() {
     rows.value = Object.entries(props.flow || {})
         .map(([slot, v]) => ({
-            slot,
+            slot: normalizeSlot(slot),
             value: typeof v === "number" ? v : (v?.total ?? 0)
         }))
-        .sort((a, b) => {
-            // 24-1 всегда в конце
-            if (a.slot === '24-1') return 1
-            if (b.slot === '24-1') return -1
-            return parseInt(a.slot) - parseInt(b.slot)
-        })
+        .sort(sortRows)
 }
 
 function syncToProps() {

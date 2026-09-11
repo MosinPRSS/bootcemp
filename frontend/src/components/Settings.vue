@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue"
+import { computed, watch } from "vue"
 
 const props = defineProps({
     title: { type: String, default: "" },
@@ -18,6 +18,24 @@ const regions = [
     "Крайний Север"
 ]
 
+// Коэффициент региона
+const REGION_MULTIPLIERS = {
+    "Дальневосточный": 1.3,
+    "Крайний Север": 1.3
+}
+const DEFAULT_REGION_MULTIPLIER = 1
+
+function regionMultiplier(region) {
+    return REGION_MULTIPLIERS[region] ?? DEFAULT_REGION_MULTIPLIER
+}
+
+// При смене региона — сразу обновляем коэффициент.
+// Если пользователь потом поменяет число вручную, оно останется до следующей
+// смены региона.
+watch(() => props.modifiers.region, (r) => {
+    if (r) props.modifiers.region_multiplier = regionMultiplier(r)
+})
+
 const seasons = ["Зима", "Весна", "Лето", "Осень"]
 
 const daysOfWeek = [
@@ -31,7 +49,7 @@ const daysOfWeek = [
 ]
 
 const calcMode = computed({
-    get: () => props.modifiers.calc_mode || "date", 
+    get: () => props.modifiers.calc_mode || "date",
     set: v => (props.modifiers.calc_mode = v)
 })
 
@@ -150,3 +168,79 @@ const onDate = () =>
         </div>
     </div>
 </template>
+
+<style scoped>
+.settings-card {
+    color: var(--text);
+}
+
+/* Поля ввода и селекты — тёмная тема */
+.settings-card .form-control,
+.settings-card .form-select {
+    background-color: var(--code-bg);
+    border: 1px solid var(--border);
+    color: var(--text-h);
+    min-height: 46px;
+    padding: 0.55rem 0.7rem;
+}
+
+/* У селекта нужен отступ справа под стрелку */
+.settings-card .form-select {
+    padding-right: 1.75rem !important;
+}
+
+/* Фокус */
+.settings-card .form-control:focus,
+.settings-card .form-select:focus {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 0 0 0.25rem rgba(170, 59, 255, 0.25);
+}
+
+/* Placeholder (disabled option) */
+.settings-card .form-control::placeholder {
+    color: #8a8f98;
+}
+
+/* Выпадающие опции — критично: без этого текст сливается с фоном */
+.settings-card .form-select option {
+    background-color: #2a2f36;
+    color: #ffffff;
+}
+
+/* Выбранная/наведённая опция */
+.settings-card .form-select option:checked,
+.settings-card .form-select option:hover {
+    background-color: var(--accent);
+    color: #fff;
+}
+
+/* Заголовки и подписи */
+.settings-card .header-title {
+    color: #fff;
+}
+
+.settings-card .settings-section-title {
+    color: #fff;
+}
+
+.settings-card .field label {
+    color: var(--text);
+}
+
+/* Чекбокс */
+.settings-card .form-check-label {
+    color: var(--text);
+}
+
+.settings-card .form-check-input {
+    background-color: var(--code-bg);
+    border: 1px solid var(--border);
+}
+
+.settings-card .form-check-input:checked {
+    background-color: var(--accent);
+    border-color: var(--accent);
+}
+</style>
