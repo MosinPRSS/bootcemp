@@ -3,6 +3,7 @@ import { ref, computed } from "vue"
 import AppHeader from "../components/AppHeader.vue"
 import Table from "../tables/Table.vue"
 import Settings from "../components/Settings.vue"
+import FlowTable from "../components/FlowTable.vue"
 
 const props = defineProps({
     inputData: { type: Object, default: null },
@@ -27,17 +28,19 @@ const initialDate = computed(() => props.inputData?.schedule?.date || "")
     <AppHeader title="Расчёт маршрута" :date="initialDate" />
     <ul class="nav nav-tabs justify-content-center mb-3">
         <li class="nav-item"><a class="nav-link" :class="{active: tab==='fleet'}" @click="tab='fleet'">Автопарк</a></li>
+        <li class="nav-item"><a class="nav-link" :class="{active: tab==='settings'}"  @click="tab='settings'">Модификаторы</a></li>
         <li class="nav-item"><a class="nav-link" :class="{active: tab==='flow'}"  @click="tab='flow'">Пассажиропоток</a></li>
     </ul>
     <div class="text-center mb-4 d-flex justify-content-center gap-2">
         <button v-if="tab==='fleet'" class="btn btn-primary" @click="emit('loadFleet')" :disabled="isLoading">Загрузить автопарк (fleet.json)</button>
-        <button v-if="tab==='flow'"  class="btn btn-primary" @click="emit('loadData')"  :disabled="isLoading">Загрузить пассажиропоток (data.json)</button>
+        <button v-if="tab==='settings'"  class="btn btn-primary" @click="emit('loadData')"  :disabled="isLoading">Загрузить пассажиропоток (data.json)</button>
         <button class="btn btn-outline-primary" @click="emit('createEmpty')" :disabled="isLoading">Заполнить вручную</button>
     </div>
     <template v-if="inputData">
         <Table v-if="tab==='fleet'" :vehicles="inputData.fleet" />
+        <FlowTable v-if="tab === 'flow'" :flow="inputData.schedule.hourly_flow" />
         <Settings
-            v-if="tab==='flow'"
+            v-if="tab==='settings'"
             title="Настройки"
             :modifiers="inputData.modifiers"
             :schedule="inputData.schedule"
