@@ -97,8 +97,7 @@ const slotClass = (slot) => isValidSlot(slot) ? "" : "is-invalid"
 </script>
 
 <template>
-    <div class="flow-table">
-        <h3 class="section-title">Пассажиропоток по часам</h3>
+    <div class="flow-table">        
         <table class="table">
             <thead>
                 <tr>
@@ -117,6 +116,7 @@ const slotClass = (slot) => isValidSlot(slot) ? "" : "is-invalid"
                             :class="slotClass(row.slot)"
                             placeholder="5-6"
                             @change="syncToProps"
+                            :disabled
                         />
                     </td>
                     <td>
@@ -146,9 +146,6 @@ const slotClass = (slot) => isValidSlot(slot) ? "" : "is-invalid"
             >
                 + Добавить интервал
             </button>
-            <span class="table-hint">
-                Формат: «1-2», «2-3», …, «23-24», «24-1» (переполнение через полночь).
-            </span>
         </div>
     </div>
 </template>

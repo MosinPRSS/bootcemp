@@ -157,6 +157,7 @@ function normalizeSchedule(s) {
     const out = {}
     if (s.day_of_week !== undefined) out.day_of_week = String(s.day_of_week)
     if (s.daily_coefficient !== undefined) out.daily_coefficient = Number(s.daily_coefficient)
+    if (s.date !== undefined) out.date = String(s.date)
     return out
 }
 
@@ -256,6 +257,29 @@ const onFlowFileChange = (event) => readJSONFile(event, (json) => {
     applyFlow(normalized)
 })
 
+// --- Сборка актуального input для расчёта/экспорта ---
+
+// Собираем "эффективные" данные в один снимок и отдаём наверх.
+// Глубокое клонирование обязательно: иначе родитель и DataSetup будут
+// держать ссылки на одни и те же объекты.
+function buildInput() {
+    const fleet = JSON.parse(JSON.stringify(effectiveFleet.value || []))
+    const modifiers = JSON.parse(JSON.stringify(effectiveModifiers.value || {}))
+    const schedule = JSON.parse(JSON.stringify(effectiveSchedule.value || { hourly_flow: {} }))
+
+    // Автозаполнение дня недели из даты — иначе api.js отдаст
+    // «Не задан день недели (выбери дату)».
+    if (!schedule.day_of_week && schedule.date) {
+        const wd = new Date(schedule.date).toLocaleDateString("ru-RU", { weekday: "long" })
+        schedule.day_of_week = wd.charAt(0).toUpperCase() + wd.slice(1)
+    }
+
+    return { fleet, modifiers, schedule }
+}
+
+const onCalculate = () => emit("calculate", buildInput())
+const onExport    = () => emit("export",    buildInput())
+
 // --- Перенос локальных черновиков в inputData, когда он появится ---
 watch(() => props.inputData, (newVal) => {
     if (!newVal) return
@@ -345,8 +369,8 @@ watch(() => props.inputData, (newVal) => {
         :schedule="effectiveSchedule"
         :initial-date="effectiveSchedule?.date || ''"
         @update:date="(d) => emit('update:date', d)"
-        @calculate="emit('calculate')"
-        @export="emit('export')"
+        @calculate="onCalculate"
+        @export="onExport"
     />
 
     <FlowTable v-if="tab === 'flow'" :flow="currentFlow" />
