@@ -16,6 +16,9 @@ using json = nlohmann::json;
 
 namespace {
 
+const double WINTER_COEF = 1.1;
+const double FAR_COEF = 1.3;
+
 int ParseHour(const std::string& interval) {
     const auto separator = interval.find('-');
 
@@ -119,6 +122,14 @@ const char* exec_math_magic(const char* raw_json) {
         data.season =
             modifiers.at("season").get<std::string>();
 
+        if (data.region == "Крайний Север" || data.region == "Дальний Восток") {
+            data.region_multiplier = FAR_COEF;
+        }
+
+        if (data.season == "Зима") {
+            data.season_multiplier = WINTER_COEF;
+        }
+
         const double route_cycle_hours =
             modifiers
                 .at("route_cycle_hours")
@@ -172,7 +183,9 @@ const char* exec_math_magic(const char* raw_json) {
             const int hour = ParseHour(interval);
 
             const int64_t demand =
-                value.get<int64_t>();
+                static_cast<int64_t>(std::llround(
+                    value.get<double>() * data.daily_coefficient
+                ));
 
             if (demand < 0) {
                 throw std::invalid_argument(
