@@ -1,39 +1,29 @@
+// мне лень что-то умнее сокрытия придумывать, так что оставим так
+
+
 package module
 
+/*
+#cgo CFLAGS: -I${SRCDIR}/lib/transport_optimizer/Bootcamp_IT_ONE
+#cgo LDFLAGS: -L${SRCDIR}/lib/transport_optimizer/Bootcamp_IT_ONE -Wl,-rpath,${SRCDIR}/lib/transport_optimizer/Bootcamp_IT_ONE -ltransport_optimizer
+
+#include "bridge.hpp"
+#include <stdlib.h>
+*/
+import "C"
 import (
 	"encoding/json"
 	"fmt"
-	"os"
-	"syscall"
 	"unsafe"
 )
 
-// я через длл для винды делал
-var (
-	transportOptimizer *syscall.LazyDLL
-	procExecMagic      *syscall.LazyProc
-	procFreeMem        *syscall.LazyProc
-)
-
-func init() {
-	// получаем настройки
-	dllPath := os.Getenv("TRANSPORT_OPTIMIZER_DLL")
-	if dllPath == "" {
-		dllPath = "transport_optimizer.dll"
-	}
-
-	// получаем функции длл
-	transportOptimizer = syscall.NewLazyDLL(dllPath)
-	procExecMagic = transportOptimizer.NewProc("exec_math_magic")
-	procFreeMem = transportOptimizer.NewProc("free_mem")
-}
-
+// JSON input
+// ---
 type FleetItem struct {
 	Model           string  `json:"model"`
 	Class           string  `json:"class"`
 	MaxAvailable    int     `json:"max_available"`
 	Capacity        int     `json:"capacity"`
-	Seats           int     `json:"seats"`
 	BaseCostPerHour float64 `json:"base_cost_per_hour"`
 }
 
@@ -41,7 +31,6 @@ type Modifiers struct {
 	Region          string  `json:"region"`
 	Season          string  `json:"season"`
 	RouteCycleHours float64 `json:"route_cycle_hours"`
-	IsLongRide      bool    `json:"is_long"`
 }
 
 type Schedule struct {
@@ -50,17 +39,24 @@ type Schedule struct {
 	HourlyFlow       map[string]int `json:"hourly_flow"`
 }
 
+// верхушка айсберга
 type Root struct {
 	Fleet     []FleetItem `json:"fleet"`
 	Modifiers Modifiers   `json:"modifiers"`
 	Schedule  Schedule    `json:"schedule"`
 }
 
+// ====================================
+
+// JSON output
+// ---
+// Departure представляет один рейс
 type Departure struct {
 	Time  string `json:"time"`
 	Trips int    `json:"trips"`
 }
 
+// AssignedVehicle представляет назначенный транспорт в расписании
 type AssignedVehicle struct {
 	Capacity        int         `json:"capacity"`
 	Departures      []Departure `json:"departures"`
@@ -69,6 +65,7 @@ type AssignedVehicle struct {
 	Trips           int         `json:"trips"`
 }
 
+// ScheduleInterval представляет интервал расписания
 type ScheduleInterval struct {
 	Assigned        []AssignedVehicle `json:"assigned"`
 	Demand          int               `json:"demand"`
@@ -77,6 +74,7 @@ type ScheduleInterval struct {
 	Shortage        int               `json:"shortage"`
 }
 
+// FleetUsage представляет использование автопарка
 type FleetUsage struct {
 	BusyMinutes  int    `json:"busy_minutes"`
 	MaxAvailable int    `json:"max_available"`
@@ -84,6 +82,7 @@ type FleetUsage struct {
 	Trips        int    `json:"trips"`
 }
 
+// Parameters представляет параметры расчета
 type Parameters struct {
 	DailyCoefficient  float64 `json:"daily_coefficient"`
 	RegionMultiplier  float64 `json:"region_multiplier"`
@@ -91,6 +90,7 @@ type Parameters struct {
 	SeasonMultiplier  float64 `json:"season_multiplier"`
 }
 
+// Summary представляет сводку результата
 type Summary struct {
 	AllDemandSatisfied    bool    `json:"all_demand_satisfied"`
 	OperatingCostRub      float64 `json:"operating_cost_rub"`
@@ -99,6 +99,7 @@ type Summary struct {
 	TransportedPassengers int     `json:"transported_passengers"`
 }
 
+// OutputResponse корневая структура выходных данных
 type OutputResponse struct {
 	CostStatus       string             `json:"cost_status"`
 	FleetUsage       []FleetUsage       `json:"fleet_usage"`
@@ -110,44 +111,26 @@ type OutputResponse struct {
 	Summary          Summary            `json:"summary"`
 }
 
-func goStringFromC(ptr uintptr) string {
-	if ptr == 0 {
-		return ""
-	}
-
-	var len int
-	for {
-		b := *(*byte)(unsafe.Pointer(ptr + uintptr(len)))
-		if b == 0 {
-			break
-		}
-		len++
-	}
-	return string(unsafe.Slice((*byte)(unsafe.Pointer(ptr)), len))
-}
-
+// ---
 func (r *Root) CalculateSolution() (*OutputResponse, error) {
-	// зачем-то анмаршаллим, могли бы без json, но уже ладно
-	str, err := json.Marshal(r)
+	plainText, err := json.Marshal(r)
 	if err != nil {
 		return nil, fmt.Errorf("failed to marshal input: %w", err)
 	}
 
-	cstr := append([]byte(str), 0)
+	cstring := C.CString(string(plainText))
+	defer C.free(unsafe.Pointer(cstring))
 
-	// вызываем подсчеты
-	ret, _, _ := procExecMagic.Call(uintptr(unsafe.Pointer(&cstr[0])))
-	if ret == 0 {
-		return nil, fmt.Errorf("optimizer returned null!!!!!!")
+	result := C.exec_math_magic(cstring)
+	if result == nil {
+		return nil, fmt.Errorf("optimizer returned null")
 	}
+	defer C.free_mem(result)
 
-	res := goStringFromC(ret)
-
-	// подчищаем
-	procFreeMem.Call(ret)
+	output := C.GoString(result)
 
 	var response OutputResponse
-	if err := json.Unmarshal([]byte(res), &response); err != nil {
+	if err := json.Unmarshal([]byte(output), &response); err != nil {
 		return nil, fmt.Errorf("failed to unmarshal optimizer response: %w", err)
 	}
 
