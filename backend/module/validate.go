@@ -35,9 +35,18 @@ func (r *Root) ValidateJSON(d []byte) (*Root, error) {
 		if item.MaxAvailable <= 0 {
 			return nil, fmt.Errorf("fleet[%d]: max_available должен быть > 0, получено %d", i, item.MaxAvailable)
 		}
-		if item.Capacity <= 0 {
-			return nil, fmt.Errorf("fleet[%d]: capacity должен быть > 0, получено %d", i, item.Capacity)
+
+		if r.Modifiers.IsLongRide {
+			if item.Capacity <= 0 {
+				return nil, fmt.Errorf("fleet[%d]: capacity должен быть > 0, получено %d", i, item.Capacity)
+			}
+		} else {
+			if item.Seats <= 0 {
+				return nil, fmt.Errorf("fleet[%d]: seats должен быть > 0, получено %d", i, item.Seats)
+			}
+			item.Capacity = item.Seats
 		}
+
 		if item.BaseCostPerHour <= 0 {
 			return nil, fmt.Errorf("fleet[%d]: base_cost_per_hour должен быть > 0, получено %.2f", i, item.BaseCostPerHour)
 		}
@@ -51,7 +60,6 @@ func (r *Root) ValidateJSON(d []byte) (*Root, error) {
 		r.Modifiers.Season = "1"
 	}
 	if r.Modifiers.RouteCycleHours <= 0 {
-		fmt.Errorf("modifiers.route_cycle_hours должен быть > 0, получено %.1f", r.Modifiers.RouteCycleHours)
 		r.Modifiers.RouteCycleHours = 1
 	}
 
