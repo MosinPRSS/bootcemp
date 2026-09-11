@@ -161,7 +161,7 @@ func generateXLSX(data module.OutputResponse) (string, error) {
 		return "", fmt.Errorf("не удалось создать директорию reports: %w", err)
 	}
 
-	filename := "report_" + time.Now().String() + ".xlsx"
+	filename := fmt.Sprintf("report_%d.xlsx", time.Now().UnixNano())
 	filePath := filepath.Join("reports", filename)
 	if err := f.SaveAs(filePath); err != nil {
 		return "", fmt.Errorf("не удалось сохранить файл %q: %w", filePath, err)
